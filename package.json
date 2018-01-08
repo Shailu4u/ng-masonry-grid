@@ -2,11 +2,12 @@
   "name": "ng-masonry-grid",
   "version": "0.0.2",
   "description": "Angular 4+ masonry grid component with CSS3 animations on scroll.",
-  "main": "./src/index.ts",
+  "main": "index.ts",
   "scripts": {
     "transpile": "ngc",
     "package": "./node_modules/.bin/rollup -c",
-    "build": "npm run transpile && npm run package"
+    "build": "npm run transpile && npm run package",
+    "publish": "npm run build and npm run publish"
   },
   "repository": {
     "type": "git",
@@ -35,7 +36,6 @@
     "core-js": "^2.4.1",
     "desandro-classie": "^1.0.1",
     "masonry-layout": "^4.2.1",
-    "rxjs": "^5.5.2",
     "zone.js": "^0.8.14"
   },
   "devDependencies": {
