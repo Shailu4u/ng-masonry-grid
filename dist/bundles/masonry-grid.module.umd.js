@@ -345,10 +345,18 @@ var MasonryGridModule = (function () {
     return MasonryGridModule;
 }());
 
+var Masonry = (function () {
+    function Masonry(selector, options) {
+    }
+    
+    return Masonry;
+}());
+
 exports.MasonryGridModule = MasonryGridModule;
 exports.MasonryGridComponent = MasonryGridComponent;
 exports.MasonryGridDirective = MasonryGridDirective;
 exports.MasonryGridService = MasonryGridService;
+exports.Masonry = Masonry;
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
