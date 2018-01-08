@@ -1,0 +1,48 @@
+{
+  "name": "ng-masonry-grid",
+  "version": "0.0.1",
+  "description": "Angular 4+ masonry grid component with CSS3 animations on scroll.",
+  "main": "./src/index.ts",
+  "scripts": {
+    "transpile": "ngc",
+    "package": "./node_modules/.bin/rollup -c",
+    "build": "npm run transpile && npm run package"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Shailu4u/masonry-grid.git"
+  },
+  "keywords": [
+    "Masonry",
+    "grid",
+    "Angular 4 masonry grid",
+    "grid animations",
+    "ng2 masonry",
+    "ng masonry",
+    "ng2 masonry grid"
+  ],
+  "author": "Shailendra Kumar <shailu.snist@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Shailu4u/masonry-grid/issues"
+  },
+  "homepage": "https://github.com/Shailu4u/masonry-grid#readme",
+  "dependencies": {
+    "@angular/animations": "^5.0.0",
+    "@angular/common": "^5.0.0",
+    "@angular/compiler": "^5.0.0",
+    "@angular/core": "^5.0.0",
+    "core-js": "^2.4.1",
+    "desandro-classie": "^1.0.1",
+    "masonry-layout": "^4.2.1",
+    "rxjs": "^5.5.2",
+    "zone.js": "^0.8.14"
+  },
+  "devDependencies": {
+    "@angular/cli": "1.5.0",
+    "@angular/compiler-cli": "^5.0.0",
+    "@angular/language-service": "^5.0.0",
+    "rollup": "^0.53.3",
+    "typescript": "~2.4.2"
+  }
+}
