@@ -1,6 +1,6 @@
 {
   "name": "ng-masonry-grid",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Angular 4+ masonry grid component with CSS3 animations on scroll.",
   "main": "index.ts",
   "scripts": {
