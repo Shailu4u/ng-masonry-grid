@@ -17,11 +17,9 @@ export interface MasonryOptions {
 }
 
 export class Masonry {
-    constructor(selector: string | Element, options?: MasonryOptions) {};
-
+    items?: any[];
     masonry?(): void;
     masonry?(eventName: string, listener: any): void;
-    items?: any[];
 
     // layout
     layout?(): void;
@@ -45,11 +43,13 @@ export class Masonry {
     destroy?(): void;
     getItemElements?(): any[];
     data?(element: Element): Masonry;
+
+    constructor(selector: string | Element, options?: MasonryOptions) {};
 }
 
 export interface AnimationOptions {
     animationEffect?: string,
     minDuration?: number;
-    maxDuration?: number;  
+    maxDuration?: number;
     viewportFactor?: number;
 }
