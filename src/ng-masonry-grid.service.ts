@@ -140,28 +140,15 @@ export class NgMasonryGridService {
 
       if (this.useAnimation || this.isAnimate && !this._msnry) {
 
-        this._msnry.on('layoutComplete', (items: any) => {
-          this.items = Array.prototype.slice.call( document.querySelectorAll( this.masonryDefaults.itemSelector) );
-          this.itemsCount = this.items.length;
-          this.didScroll = false;
-          this.itemsRenderedCount = 0;
-          // the items already shown...
-          this.items.forEach( ( el, i ) => {
-            if ( this.inViewport( el ) ) {
-              this._checkTotalRendered();
-              this.classie.add( el, 'shown' );
-              this.classie.remove( el, 'animate' );
-              // setTimeout(() => {
-
-              // }, 1000);
-            }
-          });
+        this._msnry.once('layoutComplete', (items: any) => {
+          this._layoutComplete(items);
         });
 
         // animate on scroll the items inside the viewport
         window.addEventListener( 'scroll', () => {
           this._onScrollFn();
         }, false );
+
         window.addEventListener( 'resize', () => {
           this._resizeHandler();
         }, false );
@@ -172,6 +159,24 @@ export class NgMasonryGridService {
     }
 
     return null;
+  }
+
+  private _layoutComplete(items: any) {
+    this.items = items.map((item) => item.element);
+    this.itemsCount = this.items.length;
+    this.didScroll = false;
+    this.itemsRenderedCount = 0;
+    // the items already shown...
+    this.items.forEach( ( el, i ) => {
+      if ( this.inViewport( el ) ) {
+        this._checkTotalRendered();
+        this.classie.add( el, 'shown' );
+        this.classie.remove( el, 'animate' );
+        // setTimeout(() => {
+
+        // }, 1000);
+      }
+    });
   }
 
   private _onScrollFn() {
@@ -213,7 +218,10 @@ export class NgMasonryGridService {
   private _resizeHandler() {
     let self = this;
     function delayed() {
-      self._scrollPage();
+      self._msnry.once('layoutComplete', (items: any) => {
+        self._layoutComplete(items);
+        self._scrollPage();
+      });
       self.resizeTimeout = null;
     }
     if ( this.resizeTimeout ) {

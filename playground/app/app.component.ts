@@ -17,7 +17,7 @@ import { Component } from '@angular/core';
 styleUrls: ['../../node_modules/ng-masonry-grid/ng-masonry-grid.css'] // point to ng masonry grid css
 })
 export class AppComponent {
-  title = 'app';
+
   masonryItems: Array<number> = [];
 
   constructor() {
