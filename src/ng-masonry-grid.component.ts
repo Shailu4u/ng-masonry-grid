@@ -53,7 +53,9 @@ export class NgMasonryGridComponent implements OnInit, OnDestroy, AfterViewInit 
     private masonryGridService: NgMasonryGridService
   ) {}
 
-  ngOnInit() { }
+  ngOnInit() {
+    this._element.nativeElement.classList += ' grid';
+  }
 
   ngAfterViewInit() {
     // initialize masonry after View Initialization

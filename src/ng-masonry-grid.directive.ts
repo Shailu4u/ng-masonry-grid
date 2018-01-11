@@ -10,7 +10,8 @@ import {
     forwardRef,
     OnDestroy,
     AfterViewInit,
-    PLATFORM_ID
+    PLATFORM_ID,
+    OnInit
   } from '@angular/core';
 
   import { NgMasonryGridComponent } from './ng-masonry-grid.component';
@@ -27,7 +28,7 @@ import {
     // tslint:disable-next-line:directive-selector
     selector: '[ng-masonry-grid-item], ng-masonry-grid-item'
   })
-  export class NgMasonryGridDirective implements OnDestroy, AfterViewInit {
+  export class NgMasonryGridDirective implements OnDestroy, AfterViewInit, OnInit {
 
     constructor(
       private _element: ElementRef,
@@ -35,6 +36,10 @@ import {
       private _parent: NgMasonryGridComponent,
       @Inject(PLATFORM_ID) private platformId: any
     ) {}
+
+    ngOnInit() {
+      this._element.nativeElement.classList += ' masonry-item';
+    }
 
     ngAfterViewInit() {
       if (isPlatformBrowser(this.platformId)) {
