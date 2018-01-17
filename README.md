@@ -1,22 +1,18 @@
 # ng-masonry-grid
 
+Angular 2+ masonry grid component with CSS animations on load.
+
 ## Installation
 
-To install this library, run:
+To install ng-masonry-grid library, run:
 
 ```bash
 $ npm install ng-masonry-grid --save
 ```
 
-## Consuming your library
+## Consuming NgMasonryGridModule
 
-You can import Ng Masonry Grid library in any Angular application by running:
-
-```bash
-$ npm install ng-masonry-grid
-```
-
-and then from your Angular `AppModule`:
+You can import `NgMasonryGridModule` Module in any Angular application `AppModule` as shown below:
 
 ```typescript
 import { BrowserModule } from '@angular/platform-browser';
@@ -24,7 +20,7 @@ import { NgModule } from '@angular/core';
 
 import { AppComponent } from './app.component';
 
-// Import your library
+// Import NgMasonryGridModule
 import { NgMasonryGridModule } from 'ng-masonry-grid';
 
 @NgModule({
@@ -34,7 +30,7 @@ import { NgMasonryGridModule } from 'ng-masonry-grid';
   imports: [
     BrowserModule,
 
-    // Specify your library as an import
+    // Specify NgMasonryGrid library as an import
     NgMasonryGridModule
   ],
   providers: [],
@@ -42,23 +38,52 @@ import { NgMasonryGridModule } from 'ng-masonry-grid';
 })
 export class AppModule { }
 ```
+### Example usage
 
-Once your library is imported, you can use its components, directives and pipes in your Angular application:
+Once NgMasonryGridModule Module is imported, you can use its components and directives in your Angular application:
 
 ```xml
-<!-- You can now use your library component in app.component.html -->
+<!-- You can now use ng-masonry-grid component in app.component.html -->
 <!-- Masonry grid Container -->
-<ng-masonry-grid class="grid" id="grid" 
+<ng-masonry-grid
                 [masonryOptions]="{ transitionDuration: '0.8s', gutter: 5 }" 
                 [useAnimation]="true"
                 [scrollAnimationOptions]="{ animationEffect: 'effect-6', minDuration : 0.4, maxDuration : 0.7 }">
   <!-- Masonry Grid Item -->
-  <ng-masonry-grid-item class="masonry-item" *ngFor="let item of masonryItems; let i = index;"> 
+  <ng-masonry-grid-item *ngFor="let item of masonryItems"> 
      <!-- Grid Content  -->
     <img src="some_image.jpg" alt="No image" />
   </ng-masonry-grid-item>
 </ng-masonry-grid>
 ```
+
+### Ng Masonry Grid Options
+
+```typescript
+scrollAnimationOptions = {
+  /* animation effect class will added on ng-masonry-grid-item on scroll, you can choose animation effect class from the predefined list: 
+     ["effect-1","effect-2","effect-3","effect-4","effect-5","effect-6","effect-7","effect-8"] or else you can add your own custom class as you wish */
+  animationEffect: 'effect-1', // String: (default: 'effect-1')
+  // Integer: Minimum and a maximum duration of the animation 
+  minDuration : 0,
+  maxDuration : 0,
+  // The viewportFactor defines how much of the appearing item has to be visible in order to trigger the animation
+  // if we'd use a value of 0, this would mean that it would add the animation class as soon as the item is in the viewport.
+  // If we were to use the value of 1, the animation would only be triggered when we see all of the item in the viewport (100% of it)
+  viewportFactor : 0
+}
+
+// or
+
+useAnimation = true;  // default animation options will be applied if you do not provide scrollAnimationOptions
+
+masonryOptions = {
+   transitionDuration: '0.4s', // Duration of the transition when items change position or appearance, set in a CSS time format. Default: transitionDuration: '0.4s'
+   ...
+   // More masonry options available in (http://masonry.desandro.com/options.html)
+} 
+```
+More masonry options available in [Masonry options by David DeSandro](http://masonry.desandro.com/options.html)
 
 ## Development
 
@@ -68,11 +93,29 @@ To generate all `*.js`, `*.d.ts` and `*.metadata.json` files:
 $ npm run build
 ```
 
-To lint all `*.ts` files:
+To run demo... 
+  1. From the ng-masonry-grid/dist directory, create a symlink in the global node_modules directory to the dist directory of ng-masonry-grid:
 
-```bash
-$ npm run lint
-```
+  ```bash
+  $ cd dist
+  $ npm link
+  ```
+
+  2. Navigate to ng-masonry-grid/playground directory:
+
+  ```bash
+  $ cd playground
+  $ npm link ng-masonry-grid
+  ```
+
+  3. Now run the demo (from ng-masonry-grid) directory:
+
+  ```bash
+  $ npm run demo
+  ```
+
+## Credits
+This Angular 2+ Component is created based on Masonry Layout by [David DeSandro](http://masonry.desandro.com/)
 
 ## License
 
