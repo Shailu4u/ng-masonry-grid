@@ -2,6 +2,8 @@
 
 Angular 2+ masonry grid component with CSS animations on load.
 
+[![npm version](https://badge.fury.io/js/ng-masonry-grid.svg)](https://badge.fury.io/js/ng-masonry-grid)
+
 ## Installation
 
 To install ng-masonry-grid library, run:
@@ -75,7 +77,7 @@ scrollAnimationOptions = {
 
 // or
 
-useAnimation = true;  // default animation options will be applied if you do not provide scrollAnimationOptions
+useAnimation = true;  // true/false  default: true,  default animation options will be applied if you do not provide scrollAnimationOptions
 
 masonryOptions = {
    transitionDuration: '0.4s', // Duration of the transition when items change position or appearance, set in a CSS time format. Default: transitionDuration: '0.4s'
@@ -84,6 +86,19 @@ masonryOptions = {
 } 
 ```
 More masonry options available in [Masonry options by David DeSandro](http://masonry.desandro.com/options.html)
+
+### [Masonry Events](http://masonry.desandro.com/events.html)
+#### layoutComplete: `EventEmitter<any[]>`
+Triggered after a layout and all positioning transitions have completed.
+
+#### removeComplete: `EventEmitter<any[]>`
+Triggered after an ng-masonry-grid-item element has been removed.
+
+### Examples
+```html
+<ng-masonry-grid (layoutComplete)="layoutComplete($event)" (removeComplete)="removeGridItem($event)"></ng-masonry-grid>
+```
+
 
 ## Development
 
