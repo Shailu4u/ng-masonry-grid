@@ -12,6 +12,7 @@ docs/*
 .idea
 .project
 .settings
+.playground
 .idea/*
 *.iml
 
@@ -32,3 +33,5 @@ Desktop.ini
 # Library files
 src/*
 build/*
+playground/*
+package-lock.json

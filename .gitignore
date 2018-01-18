@@ -30,6 +30,8 @@ Desktop.ini
 
 # Build files
 dist/*
+package-lock.json
 
 # Playground tmp files
 .playground
+.tmp

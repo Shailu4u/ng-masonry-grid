@@ -44,19 +44,26 @@ export class AppModule { }
 
 Once NgMasonryGridModule Module is imported, you can use its components and directives in your Angular application:
 
-```xml
-<!-- You can now use ng-masonry-grid component in app.component.html -->
-<!-- Masonry grid Container -->
-<ng-masonry-grid
-                [masonryOptions]="{ transitionDuration: '0.8s', gutter: 5 }" 
-                [useAnimation]="true"
-                [scrollAnimationOptions]="{ animationEffect: 'effect-6', minDuration : 0.4, maxDuration : 0.7 }">
-  <!-- Masonry Grid Item -->
-  <ng-masonry-grid-item *ngFor="let item of masonryItems"> 
-     <!-- Grid Content  -->
-    <img src="some_image.jpg" alt="No image" />
-  </ng-masonry-grid-item>
-</ng-masonry-grid>
+```typescript
+// In your Angular Component
+@Component({
+  selector: 'app-root',
+  template: `
+    <!-- You can now use ng-masonry-grid component in app.component.html -->
+    <!-- Masonry grid Container -->
+    <ng-masonry-grid
+                    [masonryOptions]="{ transitionDuration: '0.8s', gutter: 5 }" 
+                    [useAnimation]="true"
+                    [scrollAnimationOptions]="{ animationEffect: 'effect-4', minDuration : 0.4, maxDuration : 0.7 }">
+      <!-- Masonry Grid Item -->
+      <ng-masonry-grid-item *ngFor="let item of masonryItems"> 
+        <!-- Grid Content  -->
+        <img src="some_image.jpg" alt="No image" />
+      </ng-masonry-grid-item>
+    </ng-masonry-grid>
+  `,
+  styleUrls: ['Path_to/node_modules/ng-masonry-grid/ng-masonry-grid.css'] // point to ng-masonry-grid CSS file
+})
 ```
 
 ### Ng Masonry Grid Options
@@ -94,7 +101,7 @@ Triggered after a layout and all positioning transitions have completed.
 #### removeComplete: `EventEmitter<any[]>`
 Triggered after an ng-masonry-grid-item element has been removed.
 
-### Examples
+### Example
 ```html
 <ng-masonry-grid (layoutComplete)="layoutComplete($event)" (removeComplete)="removeGridItem($event)"></ng-masonry-grid>
 ```
