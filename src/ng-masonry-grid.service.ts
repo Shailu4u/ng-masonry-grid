@@ -28,7 +28,7 @@ export class NgMasonryGridService {
   docElem = window.document.documentElement;
 
   animationDefaults: AnimationOptions = {
-    animationEffect: 'effect-1', // default animation effect-1
+    animationEffect: 'effect-2', // default animation effect-1
     // Minimum and a maximum duration of the animation (random value is chosen)
     minDuration : 0,
     maxDuration : 0,
@@ -108,7 +108,7 @@ export class NgMasonryGridService {
     this.isAnimate = animationOptions ? true : false;
     this.masonryOptions = this.extend(this.masonryDefaults, masonryOptions);
     this.animationOptions = this.extend(this.animationDefaults, animationOptions)
-    // this.extend( this.animationDefaults, animationOptions );
+
     return this._init();
   }
 
@@ -138,7 +138,7 @@ export class NgMasonryGridService {
       // initialize masonry
       this._msnry = this.initializeMasonry(this.el, this.masonryOptions);
 
-      if (this.useAnimation || this.isAnimate && !this._msnry) {
+      if ((this.useAnimation || this.isAnimate) && this._msnry) {
 
         this._msnry.once('layoutComplete', (items: any) => {
           this._layoutComplete(items);
@@ -149,9 +149,9 @@ export class NgMasonryGridService {
           this._onScrollFn();
         }, false );
 
-        window.addEventListener( 'resize', () => {
-          this._resizeHandler();
-        }, false );
+        // window.addEventListener( 'resize', () => {
+        //   this._resizeHandler();
+        // }, false );
 
       }
 
@@ -168,13 +168,10 @@ export class NgMasonryGridService {
     this.itemsRenderedCount = 0;
     // the items already shown...
     this.items.forEach( ( el, i ) => {
+      // this.classie.remove( el, 'animate' );
       if ( this.inViewport( el ) ) {
-        this._checkTotalRendered();
-        this.classie.add( el, 'shown' );
-        this.classie.remove( el, 'animate' );
-        // setTimeout(() => {
-
-        // }, 1000);
+        // this._checkTotalRendered();
+        this.classie.add( el, 'animate' );
       }
     });
   }
@@ -190,15 +187,14 @@ export class NgMasonryGridService {
   private _scrollPage () {
     let self = this;
     this.items.forEach( ( el, i ) => {
-      if ( !this.classie.has( el, 'shown' ) && !this.classie.has( el, 'animate' ) &&
-        this.inViewport( el, self.animationOptions.viewportFactor ) ) {
+      if ( this.inViewport( el, self.animationOptions.viewportFactor ) ) {
         setTimeout( () => {
           let perspY = this.scrollY() + this.getViewportH() / 2;
           self.el.style.WebkitPerspectiveOrigin = '50% ' + perspY + 'px';
           self.el.style.MozPerspectiveOrigin = '50% ' + perspY + 'px';
           self.el.style.perspectiveOrigin = '50% ' + perspY + 'px';
 
-          self._checkTotalRendered();
+          // self._checkTotalRendered();
 
           if ( self.animationOptions.minDuration && self.animationOptions.maxDuration ) {
             let randDuration = ( Math.random() * ( self.animationOptions.maxDuration - self.animationOptions.minDuration )
@@ -210,6 +206,8 @@ export class NgMasonryGridService {
 
           this.classie.add( el, 'animate' );
         }, 25 );
+      } else {
+         this.classie.remove( el, 'animate' );
       }
     });
     this.didScroll = false;
@@ -234,10 +232,15 @@ export class NgMasonryGridService {
     ++this.itemsRenderedCount;
     if ( this.itemsRenderedCount === this.itemsCount ) {
       window.removeEventListener( 'scroll', this._onScrollFn );
-      setTimeout(() => {
-        this._msnry.layout();
-      });
+      // setTimeout(() => {
+      //   this._msnry.layout();
+      // });
     }
+  }
+
+  public onDestory() {
+    window.removeEventListener( 'scroll', this._onScrollFn );
+    // window.removeEventListener( 'resize', this._resizeHandler );
   }
 
 }

@@ -30,17 +30,17 @@
 
 /* Effect 1: opacity */
 .grid.effect-1 .masonry-item.animate {
-	-webkit-animation: fadeIn 0.65s ease forwards;
-	animation: fadeIn 0.65s ease forwards;
+	-webkit-animation: fadeIn 0.8s ease forwards;
+	animation: fadeIn 0.8s ease forwards;
 }
 
 @-webkit-keyframes fadeIn {
-	0% { }
+	0% { opacity: 0; }
 	100% { opacity: 1; }
 }
 
 @keyframes fadeIn {
-	0% { }
+	0% { opacity: 0; }
 	100% { opacity: 1; }
 }
 

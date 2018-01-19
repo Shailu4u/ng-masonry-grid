@@ -65,6 +65,7 @@ export class NgMasonryGridComponent implements OnInit, OnDestroy, AfterViewInit 
   ngOnDestroy() {
     if (this._msnry) {
       this._msnry.destroy();
+      this.masonryGridService.onDestory();
     }
   }
 
