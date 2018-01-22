@@ -24,11 +24,13 @@ export class NgMasonryGridService {
   isAnimate = false;
   public _msnry: IMasonry;
   public classie: any;
+  _onScrollHandler: any;
+  _onResizeHandler: any;
 
   docElem = window.document.documentElement;
 
   animationDefaults: AnimationOptions = {
-    animationEffect: 'effect-2', // default animation effect-1
+    animationEffect: 'effect-1', // default animation effect-1
     // Minimum and a maximum duration of the animation (random value is chosen)
     minDuration : 0,
     maxDuration : 0,
@@ -43,7 +45,10 @@ export class NgMasonryGridService {
   }
 
   constructor(
-    @Inject(PLATFORM_ID) private _platformId: any  ) { }
+    @Inject(PLATFORM_ID) private _platformId: any  ) {
+      this._onScrollHandler = this._onScrollFn.bind(this);
+      this._onResizeHandler = this._resizeHandler.bind(this);
+    }
 
 
   getViewportH() {
@@ -122,7 +127,7 @@ export class NgMasonryGridService {
 
     // set margin bottom of gutter length.
     if (this.masonryOptions.gutter) {
-      Array.prototype.slice.call(document.querySelectorAll(this.masonryDefaults.itemSelector)).forEach( (element: any) => {
+      Array.prototype.slice.call(this.el.children).forEach( (element: any) => {
         element.style.marginBottom = this.masonryOptions.gutter + 'px';
       });
     }
@@ -145,14 +150,8 @@ export class NgMasonryGridService {
         });
 
         // animate on scroll the items inside the viewport
-        window.addEventListener( 'scroll', () => {
-          this._onScrollFn();
-        }, false );
-
-        // window.addEventListener( 'resize', () => {
-        //   this._resizeHandler();
-        // }, false );
-
+        window.addEventListener( 'scroll', this._onScrollHandler, false );
+        window.addEventListener( 'resize', this._onResizeHandler, false );
       }
 
       return this._msnry;
@@ -168,10 +167,9 @@ export class NgMasonryGridService {
     this.itemsRenderedCount = 0;
     // the items already shown...
     this.items.forEach( ( el, i ) => {
-      // this.classie.remove( el, 'animate' );
       if ( this.inViewport( el ) ) {
-        // this._checkTotalRendered();
-        this.classie.add( el, 'animate' );
+        this._checkTotalRendered();
+        // this.classie.add( el, 'shown' );
       }
     });
   }
@@ -194,8 +192,6 @@ export class NgMasonryGridService {
           self.el.style.MozPerspectiveOrigin = '50% ' + perspY + 'px';
           self.el.style.perspectiveOrigin = '50% ' + perspY + 'px';
 
-          // self._checkTotalRendered();
-
           if ( self.animationOptions.minDuration && self.animationOptions.maxDuration ) {
             let randDuration = ( Math.random() * ( self.animationOptions.maxDuration - self.animationOptions.minDuration )
             + self.animationOptions.minDuration ) + 's';
@@ -215,32 +211,30 @@ export class NgMasonryGridService {
 
   private _resizeHandler() {
     let self = this;
+    Array.prototype.slice.call(this.el.children).forEach( (element: any) => {
+      self.classie.remove( element, 'animate' );
+    });
+
     function delayed() {
-      self._msnry.once('layoutComplete', (items: any) => {
-        self._layoutComplete(items);
-        self._scrollPage();
-      });
+      self._scrollPage();
       self.resizeTimeout = null;
     }
     if ( this.resizeTimeout ) {
       clearTimeout( this.resizeTimeout );
     }
-    this.resizeTimeout = setTimeout( delayed, 1000 );
+    this.resizeTimeout = setTimeout( delayed, 500 );
   }
 
   private _checkTotalRendered() {
     ++this.itemsRenderedCount;
     if ( this.itemsRenderedCount === this.itemsCount ) {
-      window.removeEventListener( 'scroll', this._onScrollFn );
-      // setTimeout(() => {
-      //   this._msnry.layout();
-      // });
+      window.removeEventListener( 'scroll', this._onScrollHandler, false );
     }
   }
 
   public onDestory() {
-    window.removeEventListener( 'scroll', this._onScrollFn );
-    // window.removeEventListener( 'resize', this._resizeHandler );
+    window.removeEventListener( 'scroll', this._onScrollHandler, false );
+    window.removeEventListener( 'resize', this._onResizeHandler, false );
   }
 
 }

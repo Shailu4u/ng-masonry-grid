@@ -28,8 +28,26 @@
 	max-width: 100%;
 }
 
-/* Effect 1: opacity */
+/* Effect 1: Move Up */
 .grid.effect-1 .masonry-item.animate {
+	-webkit-transform: translateY(200px);
+	transform: translateY(200px);
+	-webkit-animation: moveUp 0.65s ease forwards;
+	animation: moveUp 0.65s ease forwards;
+}
+@-webkit-keyframes moveUp {
+	0% { }
+	100% { -webkit-transform: translateY(0); opacity: 1; }
+}
+
+@keyframes moveUp {
+	0% { }
+	100% { -webkit-transform: translateY(0); transform: translateY(0); opacity: 1; }
+}
+
+
+/* Effect 2: opacity*/
+.grid.effect-2 .masonry-item.animate {	
 	-webkit-animation: fadeIn 0.8s ease forwards;
 	animation: fadeIn 0.8s ease forwards;
 }
@@ -42,24 +60,6 @@
 @keyframes fadeIn {
 	0% { opacity: 0; }
 	100% { opacity: 1; }
-}
-
-/* Effect 2: Move Up */
-.grid.effect-2 .masonry-item.animate {
-	-webkit-transform: translateY(200px);
-	transform: translateY(200px);
-	-webkit-animation: moveUp 0.65s ease forwards;
-	animation: moveUp 0.65s ease forwards;
-}
-
-@-webkit-keyframes moveUp {
-	0% { }
-	100% { -webkit-transform: translateY(0); opacity: 1; }
-}
-
-@keyframes moveUp {
-	0% { }
-	100% { -webkit-transform: translateY(0); transform: translateY(0); opacity: 1; }
 }
 
 /* Effect 3: Scale up */
