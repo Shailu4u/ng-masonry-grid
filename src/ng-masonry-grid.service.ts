@@ -5,8 +5,8 @@
 
 import { Injectable, ElementRef, PLATFORM_ID, Inject } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { MasonryOptions, Masonry as IMasonry, AnimationOptions } from './ng-masonry-grid.interface';
-import { ImagesLoadedNamespace } from './imagesloaded.interface';
+import { MasonryOptions, Masonry as IMasonry, AnimationOptions, ImagesLoadedConstructor } from './ng-masonry-grid.interface';
+
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
 
@@ -30,7 +30,7 @@ export class NgMasonryGridService {
   _onScrollHandler: any;
   _onResizeHandler: any;
   useImagesLoaded: boolean;
-  imagesLoaded: ImagesLoadedNamespace.ImagesLoadedConstructor;
+  imagesLoaded: ImagesLoadedConstructor;
 
   docElem = window.document.documentElement;
 

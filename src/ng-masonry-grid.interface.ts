@@ -53,3 +53,54 @@ export interface AnimationOptions {
     maxDuration?: number;
     viewportFactor?: number;
 }
+
+// Type definitions for imagesLoaded 4.1.1
+// Project: https://github.com/desandro/imagesloaded
+
+export type ElementSelector = Element | NodeList | Array<Element> | string;
+
+/** interface for an image currently loading or completed */
+export interface LoadingImage {
+  img: HTMLImageElement;
+  isLoaded: boolean;
+}
+
+export interface ImagesLoadedCallback {
+  (instance?: ImagesLoaded): void;
+}
+
+export interface ImagesLoadedListener {
+  (instance: ImagesLoaded, image?: LoadingImage): void;
+}
+
+export interface ImagesLoaded {
+  images: Array<LoadingImage>;
+
+  new (elem: ElementSelector, callback: ImagesLoadedCallback): ImagesLoaded;
+
+  // event listeners
+  on(event: string, listener: ImagesLoadedListener): void;
+  off(event: string, listener: ImagesLoadedListener): void;
+  once(event: string, listener: ImagesLoadedListener): void;
+}
+
+export interface ImagesLoadedOptions {
+  background: true | string;
+}
+
+export interface ImagesLoadedConstructor {
+  /**
+     * Creates a new ImagesLoaded object with the provided callback
+     * @param elem Element, NodeList, Element array, or selector string for images to watch
+     * @param options object that can tell imagesloaded to watch background images as well
+     * @param callback function triggered after all images have been loaded
+     */
+  (
+    elem: ElementSelector,
+    options: ImagesLoadedOptions,
+    callback?: ImagesLoadedCallback
+  ): ImagesLoaded;
+  (elem: ElementSelector, callback?: ImagesLoadedCallback): ImagesLoaded;
+}
+
+
