@@ -55,6 +55,7 @@ Once NgMasonryGridModule Module is imported, you can use its components and dire
     <ng-masonry-grid
                     [masonryOptions]="{ transitionDuration: '0.8s', gutter: 5 }" 
                     [useAnimation]="true"
+                    [useImagesLoaded]="true"
                     [scrollAnimationOptions]="{ animationEffect: 'effect-4', minDuration : 0.4, maxDuration : 0.7 }">
       <!-- Masonry Grid Item -->
       <ng-masonry-grid-item *ngFor="let item of masonryItems"> 
@@ -92,6 +93,10 @@ masonryOptions = {
    ...
    // More masonry options available in (http://masonry.desandro.com/options.html)
 } 
+
+// Unloaded images can throw off Masonry layouts and cause item elements to overlap. imagesLoaded plugin resolves this issue. 
+
+useImagesLoaded = "true"; // default: false, use true incase if of any images to be loaded in grid items
 ```
 More masonry options available in [Masonry options by David DeSandro](http://masonry.desandro.com/options.html)
 
