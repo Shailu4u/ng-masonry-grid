@@ -21,6 +21,7 @@ declare var require: any;
 
 import { MasonryOptions, Masonry as IMasonry, AnimationOptions } from './ng-masonry-grid.interface';
 import { NgMasonryGridService } from './ng-masonry-grid.service';
+import { Subscription } from 'rxjs/Subscription';
 
 @Component({
   selector: '[ng-masonry-grid], ng-masonry-grid',
@@ -36,11 +37,13 @@ import { NgMasonryGridService } from './ng-masonry-grid.service';
 export class NgMasonryGridComponent implements OnInit, OnDestroy, AfterViewInit {
 
   public _msnry: IMasonry;
+  private _masonrySubscription: Subscription;
 
   // Inputs
   @Input() public masonryOptions: MasonryOptions = {};
   @Input() public useAnimation = false;
   @Input() public scrollAnimationOptions: AnimationOptions;
+  @Input() public useImagesLoaded = false;
 
   // Outputs
   @Output() layoutComplete: EventEmitter<any[]> = new EventEmitter<any[]>();
@@ -66,6 +69,7 @@ export class NgMasonryGridComponent implements OnInit, OnDestroy, AfterViewInit 
     if (this._msnry) {
       this._msnry.destroy();
       this.masonryGridService.onDestory();
+      this._masonrySubscription.unsubscribe();
     }
   }
 
@@ -83,17 +87,20 @@ export class NgMasonryGridComponent implements OnInit, OnDestroy, AfterViewInit 
 
   public initializeMasonry() {
     // initialize Masonry with Animation effects
-    this._msnry = this.masonryGridService.init(this.useAnimation, this._element.nativeElement,
-      this.masonryOptions, this.scrollAnimationOptions);
+    this._masonrySubscription = this.masonryGridService.init(this._element.nativeElement,
+      this.masonryOptions, this.useAnimation, this.scrollAnimationOptions, this.useImagesLoaded).subscribe( (msnry) => {
 
-    // Bind to Masonry events
-    this._msnry.on('layoutComplete', (items: any) => {
-     this.layoutComplete.emit(items);
-    });
-    this._msnry.on('removeComplete', (items: any) => {
-     this.removeComplete.emit(items);
-    });
+        this._msnry = msnry;
 
-    this.layout();
+        // Bind to Masonry events
+        this._msnry.on('layoutComplete', (items: any) => {
+         this.layoutComplete.emit(items);
+        });
+        this._msnry.on('removeComplete', (items: any) => {
+         this.removeComplete.emit(items);
+        });
+
+        this.layout();
+      });
   }
 }

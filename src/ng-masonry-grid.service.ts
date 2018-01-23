@@ -6,6 +6,9 @@
 import { Injectable, ElementRef, PLATFORM_ID, Inject } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { MasonryOptions, Masonry as IMasonry, AnimationOptions } from './ng-masonry-grid.interface';
+import { ImagesLoadedNamespace } from './imagesloaded.interface';
+import { Observable } from 'rxjs/Observable';
+import { Subject } from 'rxjs/Subject';
 
 declare var require: any;
 
@@ -15,7 +18,7 @@ export class NgMasonryGridService {
   el: any;
   masonryOptions: MasonryOptions;
   animationOptions: AnimationOptions;
-  items: Array<any>;
+  items: Array<any> = [];
   itemsCount: number;
   itemsRenderedCount: number;
   didScroll: boolean;
@@ -26,6 +29,8 @@ export class NgMasonryGridService {
   public classie: any;
   _onScrollHandler: any;
   _onResizeHandler: any;
+  useImagesLoaded: boolean;
+  imagesLoaded: ImagesLoadedNamespace.ImagesLoadedConstructor;
 
   docElem = window.document.documentElement;
 
@@ -44,11 +49,10 @@ export class NgMasonryGridService {
     itemSelector: '[ng-masonry-grid-item], ng-masonry-grid-item' // Set default itemSelector: mandatory
   }
 
-  constructor(
-    @Inject(PLATFORM_ID) private _platformId: any  ) {
+  constructor( @Inject(PLATFORM_ID) private _platformId: any  ) {
       this._onScrollHandler = this._onScrollFn.bind(this);
       this._onResizeHandler = this._resizeHandler.bind(this);
-    }
+  }
 
 
   getViewportH() {
@@ -107,10 +111,12 @@ export class NgMasonryGridService {
     return a;
   }
 
-  public init(useAnimation: boolean, el: any, masonryOptions: MasonryOptions, animationOptions: AnimationOptions): IMasonry {
+  public init(el: any, masonryOptions: MasonryOptions, useAnimation?: boolean,
+    animationOptions?: AnimationOptions, useImagesLoaded?: boolean): Observable<IMasonry> {
     this.useAnimation = useAnimation;
     this.el = el;
     this.isAnimate = animationOptions ? true : false;
+    this.useImagesLoaded = useImagesLoaded;
     this.masonryOptions = this.extend(this.masonryDefaults, masonryOptions);
     this.animationOptions = this.extend(this.animationDefaults, animationOptions)
 
@@ -123,7 +129,7 @@ export class NgMasonryGridService {
     return new Masonry(_element, options);
   }
 
-  private _init(): IMasonry {
+  private _init(): Observable<IMasonry> {
 
     // set margin bottom of gutter length.
     if (this.masonryOptions.gutter) {
@@ -139,25 +145,39 @@ export class NgMasonryGridService {
     }
 
     if (isPlatformBrowser(this._platformId)) {
-
-      // initialize masonry
-      this._msnry = this.initializeMasonry(this.el, this.masonryOptions);
-
-      if ((this.useAnimation || this.isAnimate) && this._msnry) {
-
-        this._msnry.once('layoutComplete', (items: any) => {
-          this._layoutComplete(items);
+      const subject = new Subject<IMasonry>();
+      if (this.useImagesLoaded) {
+        this.imagesLoaded = require('imagesloaded');
+        this.imagesLoaded(this.el, { background: true}, (instance) => {
+          console.log(instance);
+          subject.next(this._initMasonry());
         });
-
-        // animate on scroll the items inside the viewport
-        window.addEventListener( 'scroll', this._onScrollHandler, false );
-        window.addEventListener( 'resize', this._onResizeHandler, false );
+        return subject.asObservable();
+      } else {
+        subject.next(this._initMasonry());
+        return subject.asObservable();
       }
-
-      return this._msnry;
     }
 
     return null;
+  }
+
+  private _initMasonry() {
+    // initialize masonry
+    this._msnry = this.initializeMasonry(this.el, this.masonryOptions);
+
+    if ((this.useAnimation || this.isAnimate) && this._msnry) {
+
+      this._msnry.once('layoutComplete', (items: any) => {
+        this._layoutComplete(items);
+      });
+
+      // animate on scroll the items inside the viewport
+      window.addEventListener( 'scroll', this._onScrollHandler, false );
+      window.addEventListener( 'resize', this._onResizeHandler, false );
+    }
+
+    return this._msnry;
   }
 
   private _layoutComplete(items: any) {
@@ -184,28 +204,31 @@ export class NgMasonryGridService {
 
   private _scrollPage () {
     let self = this;
-    this.items.forEach( ( el, i ) => {
-      if ( this.inViewport( el, self.animationOptions.viewportFactor ) ) {
-        setTimeout( () => {
-          let perspY = this.scrollY() + this.getViewportH() / 2;
-          self.el.style.WebkitPerspectiveOrigin = '50% ' + perspY + 'px';
-          self.el.style.MozPerspectiveOrigin = '50% ' + perspY + 'px';
-          self.el.style.perspectiveOrigin = '50% ' + perspY + 'px';
+    if (this.items.length) {
+      this.items.forEach( ( el, i ) => {
+        if ( this.inViewport( el, self.animationOptions.viewportFactor ) ) {
+          setTimeout( () => {
+            let perspY = this.scrollY() + this.getViewportH() / 2;
+            self.el.style.WebkitPerspectiveOrigin = '50% ' + perspY + 'px';
+            self.el.style.MozPerspectiveOrigin = '50% ' + perspY + 'px';
+            self.el.style.perspectiveOrigin = '50% ' + perspY + 'px';
 
-          if ( self.animationOptions.minDuration && self.animationOptions.maxDuration ) {
-            let randDuration = ( Math.random() * ( self.animationOptions.maxDuration - self.animationOptions.minDuration )
-            + self.animationOptions.minDuration ) + 's';
-            el.style.WebkitAnimationDuration = randDuration;
-            el.style.MozAnimationDuration = randDuration;
-            el.style.animationDuration = randDuration;
-          }
+            if ( self.animationOptions.minDuration && self.animationOptions.maxDuration ) {
+              let randDuration = ( Math.random() * ( self.animationOptions.maxDuration - self.animationOptions.minDuration )
+              + self.animationOptions.minDuration ) + 's';
+              el.style.WebkitAnimationDuration = randDuration;
+              el.style.MozAnimationDuration = randDuration;
+              el.style.animationDuration = randDuration;
+            }
 
-          this.classie.add( el, 'animate' );
-        }, 25 );
-      } else {
-         this.classie.remove( el, 'animate' );
-      }
-    });
+            this.classie.add( el, 'animate' );
+          }, 25 );
+        } else {
+           this.classie.remove( el, 'animate' );
+        }
+      });
+    }
+
     this.didScroll = false;
   }
 

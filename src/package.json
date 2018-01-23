@@ -32,9 +32,12 @@
   "peerDependencies": {
     "@angular/core": "^5.0.0",
     "@angular/common": "^5.0.0",
-    "desandro-classie": "^1.0.1",
-    "masonry-layout": "^4.2.1",
     "rxjs": "^5.1.0",
     "zone.js": "^0.8.4"
+  },
+  "dependencies": {
+    "desandro-classie": "^1.0.1",
+    "imagesloaded": "^4.1.4",
+    "masonry-layout": "^4.2.1"
   }
 }
