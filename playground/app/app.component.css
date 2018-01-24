@@ -1,0 +1,28 @@
+.container {
+    width: 90%;
+    margin: 0 auto;
+}
+
+.list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.btn {
+    border: none;
+    padding: 20px;
+    background-color: rgba(187, 143, 238, 0.7);
+    margin: 10px;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.btn.active, .btn:hover, .btn-focus {
+    background-color: chocolate;
+    color: #fff;
+}
