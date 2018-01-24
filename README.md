@@ -9,6 +9,12 @@ Preview: https://ng-masonry-grid-demo.herokuapp.com/
 
 ## Installation
 
+First install Peer dependencies
+
+```bash
+$ npm install masonry-layout desandro-classie imagesloaded --save
+```
+
 To install ng-masonry-grid library, run:
 
 ```bash
@@ -113,7 +119,6 @@ Triggered after an ng-masonry-grid-item element has been removed.
 ```html
 <ng-masonry-grid (layoutComplete)="layoutComplete($event)" (removeComplete)="removeGridItem($event)"></ng-masonry-grid>
 ```
-
 
 ## Development
 
