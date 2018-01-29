@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Masonry } from 'ng-masonry-grid';
 
 @Component({
   selector: 'app-root',
@@ -15,8 +16,10 @@ import { Component } from '@angular/core';
                   [masonryOptions]="{ transitionDuration: '0.4s', gutter: 5 }"
                   [useAnimation]="true"
                   [useImagesLoaded]="true"
-                  [scrollAnimationOptions]="animOptions">
-      <ng-masonry-grid-item *ngFor="let item of masonryItems; let i = index;">
+                  (onNgMasonryInit)="onNgMasonryInit($event)"
+                  [scrollAnimationOptions]="animOptions"
+                  >
+      <ng-masonry-grid-item *ngFor="let item of masonryItems; let i = index;" (click)="removeItem($event)">
         <img [src]="item" alt="No image" />
       </ng-masonry-grid-item>
     </ng-masonry-grid>
@@ -25,6 +28,8 @@ import { Component } from '@angular/core';
 styleUrls: ['../../node_modules/ng-masonry-grid/ng-masonry-grid.css', './app.component.css'] // point to ng masonry grid css
 })
 export class AppComponent {
+
+  _masonry: Masonry;
 
   buttons: Array<any> = [];
 
@@ -67,5 +72,22 @@ export class AppComponent {
 
   getSrc() {
     return '../assets/images/' + this.getRandomInt(1, 15) + '.jpg';
+  }
+
+  onNgMasonryInit($event: Masonry) {
+    console.log($event);
+    this._masonry = $event;
+    setTimeout(() => {
+      console.log('hello');
+      $event.reloadItems();
+    }, 3000);
+  }
+
+  removeItem($event: any) {
+    console.log($event);
+    if (this._masonry) {
+      this._masonry.remove(this._masonry.items[0].element);
+      this._masonry.layout();
+    }
   }
 }

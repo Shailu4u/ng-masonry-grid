@@ -148,8 +148,7 @@ export class NgMasonryGridService {
       const subject = new Subject<IMasonry>();
       if (this.useImagesLoaded) {
         this.imagesLoaded = require('imagesloaded');
-        this.imagesLoaded(this.el, { background: true}, (instance) => {
-          console.log(instance);
+        this.imagesLoaded(this.el, { background: true }, (instance) => {
           subject.next(this._initMasonry());
         });
         return subject.asObservable();
@@ -177,10 +176,25 @@ export class NgMasonryGridService {
       window.addEventListener( 'resize', this._onResizeHandler, false );
     }
 
+    // if (this._msnry) {
+    //   this._msnry.on('layoutComplete', (items: any) => {
+    //     Array.prototype.slice.call(this.el.children).forEach( (element: any) => {
+    //       this.classie.remove( element, 'animate' );
+    //     });
+    //   });
+
+    //   this._msnry.on('removeComplete', (items: any) => {
+    //     Array.prototype.slice.call(this.el.children).forEach( (element: any) => {
+    //       this.classie.remove( element, 'animate' );
+    //     });
+    //   });
+    // }
+
     return this._msnry;
   }
 
   private _layoutComplete(items: any) {
+    let self = this;
     this.items = items.map((item) => item.element);
     this.itemsCount = this.items.length;
     this.didScroll = false;
@@ -189,8 +203,12 @@ export class NgMasonryGridService {
     this.items.forEach( ( el, i ) => {
       if ( this.inViewport( el ) ) {
         this._checkTotalRendered();
-        // this.classie.add( el, 'shown' );
       }
+      // setTimeout(() => {
+      //   el.addEventListener('webkitAnimationEnd', (event) => {
+      //     self.classie.remove( el, 'animate' );
+      //   }, false);
+      // }, 500);
     });
   }
 

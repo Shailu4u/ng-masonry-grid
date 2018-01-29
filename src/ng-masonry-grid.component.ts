@@ -48,7 +48,7 @@ export class NgMasonryGridComponent implements OnInit, OnDestroy, AfterViewInit 
   // Outputs
   @Output() layoutComplete: EventEmitter<any[]> = new EventEmitter<any[]>();
   @Output() removeComplete: EventEmitter<any[]> = new EventEmitter<any[]>();
-
+  @Output() onNgMasonryInit: EventEmitter<IMasonry> = new EventEmitter<IMasonry>();
 
   constructor(
     @Inject(PLATFORM_ID) private _platformId: any,
@@ -96,9 +96,13 @@ export class NgMasonryGridComponent implements OnInit, OnDestroy, AfterViewInit 
         this._msnry.on('layoutComplete', (items: any) => {
          this.layoutComplete.emit(items);
         });
+
         this._msnry.on('removeComplete', (items: any) => {
          this.removeComplete.emit(items);
         });
+
+        // emit Masonry Initialization event
+        this.onNgMasonryInit.emit(this._msnry);
 
         this.layout();
       });

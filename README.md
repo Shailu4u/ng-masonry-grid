@@ -115,9 +115,16 @@ Triggered after a layout and all positioning transitions have completed.
 #### removeComplete: `EventEmitter<any[]>`
 Triggered after an ng-masonry-grid-item element has been removed.
 
+#### onNgMasonryInit: `EventEmitter<Masonry>`
+Get an instance of Masonry, so that you can use all [Masonry Methods](https://masonry.desandro.com/methods.html) such as reloadItems() etc.
+
 ### Example
 ```html
-<ng-masonry-grid (layoutComplete)="layoutComplete($event)" (removeComplete)="removeGridItem($event)"></ng-masonry-grid>
+<ng-masonry-grid 
+    (onNgMasonryInit)="onNgMasonryInit($event)"
+    (layoutComplete)="layoutComplete($event)" 
+    (removeComplete)="removeGridItem($event)">
+</ng-masonry-grid>
 ```
 
 ## Development
