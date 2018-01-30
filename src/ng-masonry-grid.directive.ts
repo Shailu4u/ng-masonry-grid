@@ -39,11 +39,12 @@ import {
 
     ngOnInit() {
       // this._element.nativeElement.classList += ' masonry-item';
+      this._parent.add(this._element.nativeElement);
     }
 
     ngAfterViewInit() {
       if (isPlatformBrowser(this.platformId)) {
-        this._parent.add(this._element.nativeElement);
+        // this._parent.add(this._element.nativeElement);
         this.watchForHtmlChanges();
       }
     }

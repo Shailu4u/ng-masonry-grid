@@ -117,7 +117,7 @@ export class NgMasonryGridService {
     animationOptions?: AnimationOptions, useImagesLoaded?: boolean): IMasonry {
     this.useAnimation = useAnimation;
     this.el = el;
-    this.isAnimate = animationOptions ? true : false;
+    this.isAnimate = this.useAnimation || (animationOptions ? true : false);
     this.useImagesLoaded = useImagesLoaded;
     this.masonryOptions = this.extend(this.masonryDefaults, masonryOptions);
     this.animationOptions = this.extend(this.animationDefaults, animationOptions)
@@ -133,7 +133,7 @@ export class NgMasonryGridService {
 
   private _init(): IMasonry {
 
-    if (this.useAnimation || this.isAnimate) {
+    if (this.isAnimate) {
       this.classie = require('desandro-classie');
       // add animation effect
       this.el.classList += ' ' + this.animationOptions.animationEffect;
@@ -287,9 +287,11 @@ export class NgMasonryGridService {
   }
 
   public removeAnimation() {
-    Array.prototype.slice.call(this.el.children).forEach( (element: any) => {
-      this.classie.remove( element, 'animate' );
-    });
+    if (this.isAnimate) {
+      Array.prototype.slice.call(this.el.children).forEach( (element: any) => {
+        this.classie.remove( element, 'animate' );
+      });
+    }
   }
 
   public add(element) {
@@ -316,14 +318,17 @@ export class NgMasonryGridService {
         this._msnry.layout();
       });
 
-      this.el.removeChild(element);
+      // this.el.removeChild(element);
     } else {
-
+     // this.el.removeChild(element);
       if (addStatus === 'prepend') {
+       // this.el.insertBefore(element, this.el.firstChild);
         this._msnry.prepended(element);
       } else if (addStatus === 'append') {
+       // this.el.appendChild(element);
         this._msnry.appended(element);
-      }else {
+      } else {
+       // this.el.appendChild(element);
         this._msnry.addItems(element);
       }
 
@@ -334,5 +339,20 @@ export class NgMasonryGridService {
 
   public setAddStatus(value: string) {
     this.masonryOptions.addStatus = value;
+  }
+
+  public removeFirstItem() {
+    this.removeAnimation();
+    if (this._msnry.items.length) {
+      this._msnry.remove(this._msnry.items[0].element);
+      this._msnry.layout();
+    }
+  }
+
+  public removeAllItems() {
+    this.removeAnimation();
+    Array.prototype.slice.call(this.el.children).forEach( (element: any) => {
+      this._msnry.remove(element);
+    });
   }
 }

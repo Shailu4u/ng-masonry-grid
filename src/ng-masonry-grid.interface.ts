@@ -46,6 +46,8 @@ export class Masonry {
     data?(element: Element): Masonry;
     removeAnimation?(): void;
     setAddStatus?(value: string): void;
+    removeFirstItem?(): void;
+    removeAllItems?(): void;
 
     constructor(selector: string | Element, options?: MasonryOptions) {};
 }

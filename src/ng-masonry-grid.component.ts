@@ -132,6 +132,14 @@ export class NgMasonryGridComponent
         this.masonryGridService.setAddStatus(value);
       }
 
+      this._msnry.removeFirstItem = () => {
+        this.masonryGridService.removeFirstItem();
+      }
+
+      this._msnry.removeAllItems = () => {
+        this.masonryGridService.removeAllItems();
+      }
+
       // emit Masonry Initialization event
       this.onNgMasonryInit.emit(this._msnry);
 
