@@ -8,6 +8,7 @@ export interface MasonryOptions {
     fitWidth?: boolean;
     originLeft?: boolean;
     originTop?: boolean;
+    addStatus?: string;
 
     // setup
     containerStyle?: {};
@@ -43,6 +44,8 @@ export class Masonry {
     destroy?(): void;
     getItemElements?(): any[];
     data?(element: Element): Masonry;
+    removeAnimation?(): void;
+    setAddStatus?(value: string): void;
 
     constructor(selector: string | Element, options?: MasonryOptions) {};
 }

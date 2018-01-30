@@ -5,7 +5,17 @@ import { Masonry } from 'ng-masonry-grid';
   selector: 'app-root',
   template: `
   <div class="container">
+    <h2>Angular 2 module for Masonry layout</h2>
     <ul class="list">
+      <li class="list-item">
+        <button class="btn" (click)="addItems()">Add Items</button>
+      </li>
+      <li class="list-item">
+        <button class="btn" (click)="appendItems()">Append Items</button>
+      </li>
+      <li class="list-item">
+        <button class="btn" (click)="prependItems()">Prepend Items</button>
+      </li>
       <li class="list-item" *ngFor="let item of buttons">
         <button class="btn" [ngClass]="{ 'active': item.active }" (click)="onSelect(item)">Effect {{item.index}}</button>
       </li>
@@ -51,9 +61,9 @@ export class AppComponent {
       { index: 8, active: false }
     ];
 
-    const len = 40; // length of grid items
+    const len = 10; // length of grid items
 
-    for (let i = 0; i <= len; i++) {
+    for (let i = 0; i < len; i++) {
       this.masonryItems.push(this.getSrc());
     }
   }
@@ -63,6 +73,7 @@ export class AppComponent {
     this.buttons.forEach( (i) => i.active = false );
     item.active = true;
     this.animOptions = { animationEffect: 'effect-' + item.index };
+    this._masonry.setAddStatus('append');
     setTimeout(() => this.showMasonry = true, 100);
   }
 
@@ -77,17 +88,45 @@ export class AppComponent {
   onNgMasonryInit($event: Masonry) {
     console.log($event);
     this._masonry = $event;
-    setTimeout(() => {
-      console.log('hello');
-      $event.reloadItems();
-    }, 3000);
   }
 
   removeItem($event: any) {
-    console.log($event);
+    console.log($event); console.log(this._masonry);
     if (this._masonry) {
-      this._masonry.remove(this._masonry.items[0].element);
-      this._masonry.layout();
+      this._masonry.removeAnimation(); // remove custom animations first and then remove using masonry instance
+      this._masonry.remove($event.currentTarget);
     }
+  }
+
+  prependItems() {
+    let src = [this.getSrc(), this.getSrc(), this.getSrc()];
+    let items = [this.createElement(src[0]), this.createElement(src[1]), this.createElement(src[2])];
+    this._masonry.setAddStatus('prepend');
+    this.masonryItems.push(...src);
+  }
+
+  // append items to existing masonry
+  appendItems() {
+    let src = [this.getSrc(), this.getSrc(), this.getSrc()];
+    let items = [this.createElement(src[0]), this.createElement(src[1]), this.createElement(src[2])];
+    this._masonry.setAddStatus('append');
+    this.masonryItems.splice(0, 0, ...src);
+  }
+
+  addItems() {
+    let src = [this.getSrc(), this.getSrc(), this.getSrc()];
+    let items = [this.createElement(src[0]), this.createElement(src[1]), this.createElement(src[2])];
+    this._masonry.setAddStatus('add');
+    this.masonryItems.push(...src);
+  }
+
+  // create <ng-masonry-grid-item (click)="removeItem($event)">  <img [src]="item" alt="No image" /> </ng-masonry-grid-item>
+  createElement(src: string): any {
+    let elem = document.createElement('ng-masonry-grid-item');
+    let img = document.createElement('img');
+    img.src = src;
+    elem.appendChild(img);
+
+    return elem;
   }
 }

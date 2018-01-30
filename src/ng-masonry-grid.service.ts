@@ -46,7 +46,9 @@ export class NgMasonryGridService {
   }
 
   masonryDefaults: MasonryOptions = {
-    itemSelector: '[ng-masonry-grid-item], ng-masonry-grid-item' // Set default itemSelector: mandatory
+    // Set default itemSelector: mandatory
+    itemSelector: '[ng-masonry-grid-item], ng-masonry-grid-item, [ng-masonry-grid-item].animate, ng-masonry-grid-item.animate',
+    addStatus: 'append'
   }
 
   constructor( @Inject(PLATFORM_ID) private _platformId: any  ) {
@@ -112,7 +114,7 @@ export class NgMasonryGridService {
   }
 
   public init(el: any, masonryOptions: MasonryOptions, useAnimation?: boolean,
-    animationOptions?: AnimationOptions, useImagesLoaded?: boolean): Observable<IMasonry> {
+    animationOptions?: AnimationOptions, useImagesLoaded?: boolean): IMasonry {
     this.useAnimation = useAnimation;
     this.el = el;
     this.isAnimate = animationOptions ? true : false;
@@ -129,14 +131,7 @@ export class NgMasonryGridService {
     return new Masonry(_element, options);
   }
 
-  private _init(): Observable<IMasonry> {
-
-    // set margin bottom of gutter length.
-    if (this.masonryOptions.gutter) {
-      Array.prototype.slice.call(this.el.children).forEach( (element: any) => {
-        element.style.marginBottom = this.masonryOptions.gutter + 'px';
-      });
-    }
+  private _init(): IMasonry {
 
     if (this.useAnimation || this.isAnimate) {
       this.classie = require('desandro-classie');
@@ -144,18 +139,23 @@ export class NgMasonryGridService {
       this.el.classList += ' ' + this.animationOptions.animationEffect;
     }
 
+    if (this.useImagesLoaded) {
+       this.imagesLoaded = require('imagesloaded');
+    }
+
     if (isPlatformBrowser(this._platformId)) {
-      const subject = new Subject<IMasonry>();
-      if (this.useImagesLoaded) {
-        this.imagesLoaded = require('imagesloaded');
-        this.imagesLoaded(this.el, { background: true }, (instance) => {
-          subject.next(this._initMasonry());
-        });
-        return subject.asObservable();
-      } else {
-        subject.next(this._initMasonry());
-        return subject.asObservable();
-      }
+      // const subject = new Subject<IMasonry>();
+      // if (this.useImagesLoaded) {
+      //   this.imagesLoaded = require('imagesloaded');
+      //   this.imagesLoaded(this.el, { background: true }, (instance) => {
+      //     subject.next(this._initMasonry());
+      //   });
+      //   return subject.asObservable();
+      // } else {
+        // subject.next(this._initMasonry());
+        // return subject.asObservable();
+      // }
+      return this._initMasonry();
     }
 
     return null;
@@ -167,28 +167,27 @@ export class NgMasonryGridService {
 
     if ((this.useAnimation || this.isAnimate) && this._msnry) {
 
-      this._msnry.once('layoutComplete', (items: any) => {
-        this._layoutComplete(items);
-      });
+      // this._msnry.once('layoutComplete', (items: any) => {
+      //   this._layoutComplete(items);
+      // });
 
       // animate on scroll the items inside the viewport
       window.addEventListener( 'scroll', this._onScrollHandler, false );
       window.addEventListener( 'resize', this._onResizeHandler, false );
+
+      this._msnry.on('layoutComplete', (items: any) => {
+        Array.prototype.slice.call(this.el.children).forEach( (element: any) => {
+          this.classie.remove( element, 'animate' );
+        });
+      });
+
+      this._msnry.on('removeComplete', (items: any) => {
+        Array.prototype.slice.call(this.el.children).forEach( (element: any) => {
+          this.classie.remove( element, 'animate' );
+        });
+        this._msnry.layout();
+      });
     }
-
-    // if (this._msnry) {
-    //   this._msnry.on('layoutComplete', (items: any) => {
-    //     Array.prototype.slice.call(this.el.children).forEach( (element: any) => {
-    //       this.classie.remove( element, 'animate' );
-    //     });
-    //   });
-
-    //   this._msnry.on('removeComplete', (items: any) => {
-    //     Array.prototype.slice.call(this.el.children).forEach( (element: any) => {
-    //       this.classie.remove( element, 'animate' );
-    //     });
-    //   });
-    // }
 
     return this._msnry;
   }
@@ -216,14 +215,15 @@ export class NgMasonryGridService {
     let self = this;
     if ( !this.didScroll ) {
       this.didScroll = true;
-      setTimeout( () => { self._scrollPage(); }, 60 );
+      setTimeout( () => { self._scrollPage(); }, 100 );
     }
   }
 
   private _scrollPage () {
     let self = this;
-    if (this.items.length) {
-      this.items.forEach( ( el, i ) => {
+    let items = this._msnry.items.map((item) => item.element);
+    if (items.length) {
+      items.forEach( ( el, i ) => {
         if ( this.inViewport( el, self.animationOptions.viewportFactor ) ) {
           setTimeout( () => {
             let perspY = this.scrollY() + this.getViewportH() / 2;
@@ -240,6 +240,14 @@ export class NgMasonryGridService {
             }
 
             this.classie.add( el, 'animate' );
+            // setTimeout( () => {
+            //   this.classie.remove( el, 'animate' );
+            // }, 1000);
+            // el.addEventListener('webkitAnimationEnd', (event) => {
+            //    setTimeout( () => {
+            //     self.classie.remove( el, 'animate' );
+            //   }, 2000);
+            // }, false);
           }, 25 );
         } else {
            this.classie.remove( el, 'animate' );
@@ -278,4 +286,53 @@ export class NgMasonryGridService {
     window.removeEventListener( 'resize', this._onResizeHandler, false );
   }
 
+  public removeAnimation() {
+    Array.prototype.slice.call(this.el.children).forEach( (element: any) => {
+      this.classie.remove( element, 'animate' );
+    });
+  }
+
+  public add(element) {
+    let addStatus = this.masonryOptions.addStatus.toLocaleLowerCase();
+
+    // set margin bottom of gutter value.
+    if (this.masonryOptions.gutter) {
+      element.style.marginBottom = this.masonryOptions.gutter + 'px';
+    }
+
+    if (this.useImagesLoaded) {
+      this.imagesLoaded(element, (instance: any) => {
+        // append or prepend based on masonry option
+        if (addStatus === 'prepend') {
+          this.el.insertBefore(element, this.el.firstChild);
+          this._msnry.prepended(element);
+        } else if (addStatus === 'append') {
+          this.el.appendChild(element);
+          this._msnry.appended(element);
+        } else {
+          this.el.appendChild(element);
+          this._msnry.addItems(element);
+        }
+        this._msnry.layout();
+      });
+
+      this.el.removeChild(element);
+    } else {
+
+      if (addStatus === 'prepend') {
+        this._msnry.prepended(element);
+      } else if (addStatus === 'append') {
+        this._msnry.appended(element);
+      }else {
+        this._msnry.addItems(element);
+      }
+
+      this._msnry.layout();
+    }
+
+  }
+
+  public setAddStatus(value: string) {
+    this.masonryOptions.addStatus = value;
+  }
 }

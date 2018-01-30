@@ -1,4 +1,4 @@
-.masonry-item {	
+ng-masonry-grid-item {	
 	display: inline-block;
 }
 .grid {
@@ -8,20 +8,20 @@
 	padding: 0;
 }
 
-.grid .masonry-item {
+.grid ng-masonry-grid-item {
 	display: block;
 	float: left;
 	width: 300px;
 }
 
-.grid .masonry-item.shown,
-.no-js .grid .masonry-item,
-.no-cssanimations .grid .masonry-item {
+.grid ng-masonry-grid-item.shown,
+.no-js .grid ng-masonry-grid-item,
+.no-cssanimations .grid ng-masonry-grid-item {
 	opacity: 1;
 }
 
-.grid .masonry-item a,
-.grid .masonry-item img {
+.grid ng-masonry-grid-item a,
+.grid ng-masonry-grid-item img {
 	outline: none;
 	border: none;
 	display: block;
@@ -29,7 +29,7 @@
 }
 
 /* Effect 1: Move Up */
-.grid.effect-1 .masonry-item.animate {
+.grid.effect-1 ng-masonry-grid-item.animate {
 	-webkit-transform: translateY(200px);
 	transform: translateY(200px);
 	-webkit-animation: moveUp 0.65s ease forwards;
@@ -47,7 +47,7 @@
 
 
 /* Effect 2: opacity*/
-.grid.effect-2 .masonry-item.animate {	
+.grid.effect-2 ng-masonry-grid-item.animate {	
 	-webkit-animation: fadeIn 0.8s ease forwards;
 	animation: fadeIn 0.8s ease forwards;
 }
@@ -63,7 +63,7 @@
 }
 
 /* Effect 3: Scale up */
-.grid.effect-3 .masonry-item.animate {
+.grid.effect-3 ng-masonry-grid-item.animate {
 	-webkit-transform: scale(0.6);
 	transform: scale(0.6);
 	-webkit-animation: scaleUp 0.65s ease-in-out forwards;
@@ -86,7 +86,7 @@
 	perspective: 1300px;
 }
 
-.grid.effect-4 .masonry-item.animate {
+.grid.effect-4 ng-masonry-grid-item.animate {
 	-webkit-transform-style: preserve-3d;
 	transform-style: preserve-3d;
 	-webkit-transform: translateZ(400px) translateY(300px) rotateX(-90deg);
@@ -111,7 +111,7 @@
 	perspective: 1300px;
 }
 
-.grid.effect-5 .masonry-item.animate {
+.grid.effect-5 ng-masonry-grid-item.animate {
 	-webkit-transform-style: preserve-3d;
 	transform-style: preserve-3d;
 	-webkit-transform-origin: 50% 50% -300px;
@@ -138,7 +138,7 @@
 	perspective: 1300px;
 }
 
-.grid.effect-6 .masonry-item.animate {
+.grid.effect-6 ng-masonry-grid-item.animate {
 	-webkit-transform-style: preserve-3d;
 	transform-style: preserve-3d;
 	-webkit-transform-origin: 0% 0%;
@@ -165,7 +165,7 @@
 	perspective: 1300px;
 }
 
-.grid.effect-7 .masonry-item.animate {
+.grid.effect-7 ng-masonry-grid-item.animate {
 	-webkit-transform-style: preserve-3d;
 	transform-style: preserve-3d;
 	-webkit-transform: rotateY(-180deg);
@@ -190,7 +190,7 @@
 	perspective: 1300px;
 }
 
-.grid.effect-8 .masonry-item.animate {
+.grid.effect-8 ng-masonry-grid-item.animate {
 	-webkit-transform-style: preserve-3d;
 	transform-style: preserve-3d;
 	-webkit-transform: scale(0.4);
@@ -212,13 +212,13 @@
 }
 
 @media screen and (max-width: 900px) {
-	.grid .masonry-item {
+	.grid ng-masonry-grid-item {
 		width: 48%;
 	}
 }
 
 @media screen and (max-width: 400px) {
-	.grid .masonry-item {
+	.grid ng-masonry-grid-item {
 		width: 100%;
 	}
 }

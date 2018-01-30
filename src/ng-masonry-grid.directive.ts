@@ -38,11 +38,12 @@ import {
     ) {}
 
     ngOnInit() {
-      this._element.nativeElement.classList += ' masonry-item';
+      // this._element.nativeElement.classList += ' masonry-item';
     }
 
     ngAfterViewInit() {
       if (isPlatformBrowser(this.platformId)) {
+        this._parent.add(this._element.nativeElement);
         this.watchForHtmlChanges();
       }
     }
@@ -60,10 +61,10 @@ import {
       if (MutationObserver) {
         /** Watch for any changes to subtree */
         let self = this;
-        let observer = new MutationObserver(function(
+        let observer = new MutationObserver((
           mutations,
           observerFromElement
-        ) {
+        ) => {
           self._parent.layout();
         });
 

@@ -19,7 +19,11 @@ import { isPlatformBrowser } from '@angular/common';
 
 declare var require: any;
 
-import { MasonryOptions, Masonry as IMasonry, AnimationOptions } from './ng-masonry-grid.interface';
+import {
+  MasonryOptions,
+  Masonry as IMasonry,
+  AnimationOptions
+} from './ng-masonry-grid.interface';
 import { NgMasonryGridService } from './ng-masonry-grid.service';
 import { Subscription } from 'rxjs/Subscription';
 
@@ -34,10 +38,9 @@ import { Subscription } from 'rxjs/Subscription';
 	`
   ]
 })
-export class NgMasonryGridComponent implements OnInit, OnDestroy, AfterViewInit {
-
+export class NgMasonryGridComponent
+  implements OnInit, OnDestroy, AfterViewInit {
   public _msnry: IMasonry;
-  private _masonrySubscription: Subscription;
 
   // Inputs
   @Input() public masonryOptions: MasonryOptions = {};
@@ -48,7 +51,8 @@ export class NgMasonryGridComponent implements OnInit, OnDestroy, AfterViewInit 
   // Outputs
   @Output() layoutComplete: EventEmitter<any[]> = new EventEmitter<any[]>();
   @Output() removeComplete: EventEmitter<any[]> = new EventEmitter<any[]>();
-  @Output() onNgMasonryInit: EventEmitter<IMasonry> = new EventEmitter<IMasonry>();
+  @Output()
+  onNgMasonryInit: EventEmitter<IMasonry> = new EventEmitter<IMasonry>();
 
   constructor(
     @Inject(PLATFORM_ID) private _platformId: any,
@@ -58,18 +62,18 @@ export class NgMasonryGridComponent implements OnInit, OnDestroy, AfterViewInit 
 
   ngOnInit() {
     this._element.nativeElement.classList += ' grid';
+    this.initializeMasonry();
   }
 
   ngAfterViewInit() {
     // initialize masonry after View Initialization
-    this.initializeMasonry();
+    // this.initializeMasonry();
   }
 
   ngOnDestroy() {
     if (this._msnry) {
       this._msnry.destroy();
       this.masonryGridService.onDestory();
-      this._masonrySubscription.unsubscribe();
     }
   }
 
@@ -85,26 +89,52 @@ export class NgMasonryGridComponent implements OnInit, OnDestroy, AfterViewInit 
     this.layout();
   }
 
+  public add(element: HTMLElement) {
+    this.masonryGridService.add(element);
+  }
+
   public initializeMasonry() {
     // initialize Masonry with Animation effects
-    this._masonrySubscription = this.masonryGridService.init(this._element.nativeElement,
-      this.masonryOptions, this.useAnimation, this.scrollAnimationOptions, this.useImagesLoaded).subscribe( (msnry) => {
+    // this._masonrySubscription = this.masonryGridService
+    //   .init(
+    //     this._element.nativeElement,
+    //     this.masonryOptions,
+    //     this.useAnimation,
+    //     this.scrollAnimationOptions,
+    //     this.useImagesLoaded
+    //   )
+    //   .subscribe(msnry => {
+    //   });
 
-        this._msnry = msnry;
+      this._msnry = this.masonryGridService
+      .init(
+        this._element.nativeElement,
+        this.masonryOptions,
+        this.useAnimation,
+        this.scrollAnimationOptions,
+        this.useImagesLoaded
+      );
 
-        // Bind to Masonry events
-        this._msnry.on('layoutComplete', (items: any) => {
-         this.layoutComplete.emit(items);
-        });
-
-        this._msnry.on('removeComplete', (items: any) => {
-         this.removeComplete.emit(items);
-        });
-
-        // emit Masonry Initialization event
-        this.onNgMasonryInit.emit(this._msnry);
-
-        this.layout();
+      // Bind to Masonry events
+      this._msnry.on('layoutComplete', (items: any) => {
+        this.layoutComplete.emit(items);
       });
+
+      this._msnry.on('removeComplete', (items: any) => {
+        this.removeComplete.emit(items);
+      });
+
+      this._msnry.removeAnimation = () => {
+        this.masonryGridService.removeAnimation();
+      };
+
+      this._msnry.setAddStatus = (value: string) => {
+        this.masonryGridService.setAddStatus(value);
+      }
+
+      // emit Masonry Initialization event
+      this.onNgMasonryInit.emit(this._msnry);
+
+      this.layout();
   }
 }
