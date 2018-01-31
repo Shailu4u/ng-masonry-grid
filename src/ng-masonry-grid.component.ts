@@ -13,19 +13,21 @@ import {
   EventEmitter,
   PLATFORM_ID,
   Inject,
-  AfterViewInit
+  AfterContentInit
 } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
+import { Observable } from 'rxjs/Observable';
 
 declare var require: any;
 
 import {
   MasonryOptions,
   Masonry as IMasonry,
-  AnimationOptions
+  AnimationOptions,
+  MasonryGridItem
 } from './ng-masonry-grid.interface';
 import { NgMasonryGridService } from './ng-masonry-grid.service';
-import { Subscription } from 'rxjs/Subscription';
+// import { Subscription } from 'rxjs/Subscription';
 
 @Component({
   selector: '[ng-masonry-grid], ng-masonry-grid',
@@ -39,8 +41,10 @@ import { Subscription } from 'rxjs/Subscription';
   ]
 })
 export class NgMasonryGridComponent
-  implements OnInit, OnDestroy, AfterViewInit {
+  implements OnInit, OnDestroy, AfterContentInit {
   public _msnry: IMasonry;
+
+  public gridItemCount = 0;
 
   // Inputs
   @Input() public masonryOptions: MasonryOptions = {};
@@ -65,7 +69,7 @@ export class NgMasonryGridComponent
     this.initializeMasonry();
   }
 
-  ngAfterViewInit() {
+  ngAfterContentInit() {
     // initialize masonry after View Initialization
     // this.initializeMasonry();
   }
@@ -90,7 +94,7 @@ export class NgMasonryGridComponent
   }
 
   public add(element: HTMLElement) {
-    this.masonryGridService.add(element);
+    this.masonryGridService.add(element, this.gridItemCount);
   }
 
   public initializeMasonry() {
@@ -132,12 +136,12 @@ export class NgMasonryGridComponent
         this.masonryGridService.setAddStatus(value);
       }
 
-      this._msnry.removeFirstItem = () => {
-        this.masonryGridService.removeFirstItem();
+      this._msnry.removeFirstItem = (): Observable<MasonryGridItem> => {
+        return this.masonryGridService.removeFirstItem();
       }
 
-      this._msnry.removeAllItems = () => {
-        this.masonryGridService.removeAllItems();
+      this._msnry.removeAllItems = (): Observable<MasonryGridItem> => {
+        return this.masonryGridService.removeAllItems();
       }
 
       // emit Masonry Initialization event

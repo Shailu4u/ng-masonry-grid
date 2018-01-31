@@ -5,7 +5,8 @@
 
 import { Injectable, ElementRef, PLATFORM_ID, Inject } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { MasonryOptions, Masonry as IMasonry, AnimationOptions, ImagesLoadedConstructor } from './ng-masonry-grid.interface';
+import { MasonryOptions, Masonry as IMasonry, AnimationOptions,
+        ImagesLoadedConstructor, MasonryGridItem } from './ng-masonry-grid.interface';
 
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
@@ -144,17 +145,6 @@ export class NgMasonryGridService {
     }
 
     if (isPlatformBrowser(this._platformId)) {
-      // const subject = new Subject<IMasonry>();
-      // if (this.useImagesLoaded) {
-      //   this.imagesLoaded = require('imagesloaded');
-      //   this.imagesLoaded(this.el, { background: true }, (instance) => {
-      //     subject.next(this._initMasonry());
-      //   });
-      //   return subject.asObservable();
-      // } else {
-        // subject.next(this._initMasonry());
-        // return subject.asObservable();
-      // }
       return this._initMasonry();
     }
 
@@ -294,7 +284,7 @@ export class NgMasonryGridService {
     }
   }
 
-  public add(element) {
+  public add(element, count) {
     let addStatus = this.masonryOptions.addStatus.toLocaleLowerCase();
 
     // set margin bottom of gutter value.
@@ -302,12 +292,21 @@ export class NgMasonryGridService {
       element.style.marginBottom = this.masonryOptions.gutter + 'px';
     }
 
+    if (this.el.hasChildNodes() && this.el.contains(element)) {
+      this.el.removeChild(element);
+    }
+
     if (this.useImagesLoaded) {
       this.imagesLoaded(element, (instance: any) => {
         // append or prepend based on masonry option
         if (addStatus === 'prepend') {
-          this.el.insertBefore(element, this.el.firstChild);
-          this._msnry.prepended(element);
+          if (this._msnry.items.length !== 0) {
+            this.el.insertBefore(element, this._msnry.items[0].element);
+            this._msnry.prepended(element);
+          } else {
+            this.el.appendChild(element);
+            this._msnry.appended(element);
+          }
         } else if (addStatus === 'append') {
           this.el.appendChild(element);
           this._msnry.appended(element);
@@ -318,12 +317,16 @@ export class NgMasonryGridService {
         this._msnry.layout();
       });
 
-      // this.el.removeChild(element);
     } else {
      // this.el.removeChild(element);
       if (addStatus === 'prepend') {
-       // this.el.insertBefore(element, this.el.firstChild);
-        this._msnry.prepended(element);
+        if (this._msnry.items.length !== 0) {
+          // this.el.insertBefore(element, this._msnry.items[0].element);
+          this._msnry.prepended(element);
+        } else {
+          this.el.appendChild(element);
+          this._msnry.appended(element);
+        }
       } else if (addStatus === 'append') {
        // this.el.appendChild(element);
         this._msnry.appended(element);
@@ -341,18 +344,35 @@ export class NgMasonryGridService {
     this.masonryOptions.addStatus = value;
   }
 
-  public removeFirstItem() {
+  public removeFirstItem(): Observable<MasonryGridItem> {
     this.removeAnimation();
     if (this._msnry.items.length) {
-      this._msnry.remove(this._msnry.items[0].element);
-      this._msnry.layout();
+      const obsv = new Observable(observer => {
+        // let count = this._msnry.items[0].element.getAttribute('data-count');
+        // let index = Array.prototype.slice.call(this.el.children).findIndex( (element: any) => {
+        //    return element.getAttribute('data-count') === count;
+        // });
+        observer.next({ element: this._msnry.items[0].element, index: 0 });
+        this._msnry.remove(this._msnry.items[0].element);
+      });
+
+      return obsv;
     }
+
+    return null;
   }
 
-  public removeAllItems() {
+  public removeAllItems(): Observable<MasonryGridItem> {
     this.removeAnimation();
-    Array.prototype.slice.call(this.el.children).forEach( (element: any) => {
-      this._msnry.remove(element);
+    const obsv = new Observable(observer => {
+      let items: MasonryGridItem[] = [];
+      Array.prototype.slice.call(this.el.children).forEach( (element: any, index: number) => {
+        items.push({ element, index });
+        this._msnry.remove(element);
+      });
+      observer.next(items);
     });
+
+    return obsv;
   }
 }

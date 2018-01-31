@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
-import { Masonry } from 'ng-masonry-grid';
-
+import { Component, OnDestroy } from '@angular/core';
+import { Masonry, MasonryGridItem } from 'ng-masonry-grid';
+import { ISubscription } from 'rxjs/Subscription';
+import 'rxjs/add/operator/map';
 @Component({
   selector: 'app-root',
   template: `
@@ -17,9 +18,6 @@ import { Masonry } from 'ng-masonry-grid';
         <button class="btn" (click)="prependItems()">Prepend Items</button>
       </li>
       <li class="list-item">
-        <button class="btn" (click)="removeFirstItem()">Remove First Item</button>
-      </li>
-      <li class="list-item">
         <button class="btn" (click)="removeAllItems()">Remove All Items</button>
       </li>
       <li class="list-item" *ngFor="let item of buttons">
@@ -31,11 +29,11 @@ import { Masonry } from 'ng-masonry-grid';
     <ng-masonry-grid *ngIf="showMasonry"
                   [masonryOptions]="{ transitionDuration: '0.4s', gutter: 5 }"
                   [useAnimation]="true"
-                  [useImagesLoaded]="false"
+                  [useImagesLoaded]="true"
                   (onNgMasonryInit)="onNgMasonryInit($event)"
                   [scrollAnimationOptions]="animOptions"
                   >
-      <ng-masonry-grid-item *ngFor="let item of masonryItems; let i = index;" (click)="removeItem($event)">
+      <ng-masonry-grid-item *ngFor="let item of masonryItems; let i = index;" (click)="removeItem($event, i)">
         <img [src]="item" alt="No image" />
       </ng-masonry-grid-item>
     </ng-masonry-grid>
@@ -43,9 +41,10 @@ import { Masonry } from 'ng-masonry-grid';
 `,
 styleUrls: ['../../node_modules/ng-masonry-grid/ng-masonry-grid.css', './app.component.css'] // point to ng masonry grid css
 })
-export class AppComponent {
+export class AppComponent implements OnDestroy {
 
   _masonry: Masonry;
+  private _removeSubscription: ISubscription;
 
   buttons: Array<any> = [];
 
@@ -74,6 +73,12 @@ export class AppComponent {
     }
   }
 
+  ngOnDestroy() {
+    if (this._masonry) {
+      this._removeSubscription.unsubscribe();
+    }
+  }
+
   onSelect(item: any) {
     this.showMasonry = false;
     this.buttons.forEach( (i) => i.active = false );
@@ -96,24 +101,26 @@ export class AppComponent {
     this._masonry = $event;
   }
 
-  removeItem($event: any) {
+  removeItem($event: any, index: number) {
     if (this._masonry) {
-      this._masonry.removeAnimation(); // remove custom animations first and then remove using masonry instance
-      this._masonry.remove($event.currentTarget);
+      this._masonry.removeAnimation(); // remove scroll animations first and then remove using masonry instance
+      this._masonry.remove($event.currentTarget); // remove from masonry first
+      this.masonryItems.splice(index, 1); // remove from masonryItems array as well
+      console.log(this.masonryItems.length, this._masonry.items.length);
     }
   }
 
   prependItems() {
     let src = [this.getSrc(), this.getSrc(), this.getSrc()];
     this._masonry.setAddStatus('prepend');
-    this.masonryItems.push(...src);
+    this.masonryItems.splice(0, 0, ...src);
   }
 
   // append items to existing masonry
   appendItems() {
     let src = [this.getSrc(), this.getSrc(), this.getSrc()];
     this._masonry.setAddStatus('append');
-    this.masonryItems.splice(0, 0, ...src);
+    this.masonryItems.push(...src);
   }
 
   addItems() {
@@ -122,15 +129,24 @@ export class AppComponent {
     this.masonryItems.push(...src);
   }
 
-  removeFirstItem() {
-    if (this._masonry) {
-      this._masonry.removeFirstItem();
-    }
-  }
+  // removeFirstItem() {
+  //   if (this._masonry) {
+  //     this._masonry.removeFirstItem()
+  //         .subscribe( (item: MasonryGridItem) => {
+  //           this.masonryItems.splice(0, 1) ;
+  //           console.log(this.masonryItems.length, this._masonry.items.length);
+  //        });
+  //   }
+  // }
 
   removeAllItems() {
     if (this._masonry) {
-      this._masonry.removeAllItems();
+      this._removeSubscription =
+        this._masonry.removeAllItems()
+        .subscribe( (item: MasonryGridItem) => {
+           // remove item from the list
+           this.masonryItems.length = 0;
+        });
     }
   }
 }

@@ -1,3 +1,10 @@
+import { Observable } from 'rxjs/Observable';
+
+export class MasonryGridItem {
+  element?: any;
+  index?: number; // Grid item static order index inside ng-masonry-grid container
+}
+
 export interface MasonryOptions {
     // layout
     itemSelector?: string;
@@ -46,8 +53,8 @@ export class Masonry {
     data?(element: Element): Masonry;
     removeAnimation?(): void;
     setAddStatus?(value: string): void;
-    removeFirstItem?(): void;
-    removeAllItems?(): void;
+    removeFirstItem?(): Observable<MasonryGridItem>;
+    removeAllItems?(): Observable<MasonryGridItem>;
 
     constructor(selector: string | Element, options?: MasonryOptions) {};
 }
