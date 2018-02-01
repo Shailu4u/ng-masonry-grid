@@ -66,17 +66,19 @@ Once NgMasonryGridModule Module is imported, you can use its components and dire
                     [useImagesLoaded]="true"
                     [scrollAnimationOptions]="{ animationEffect: 'effect-4', minDuration : 0.4, maxDuration : 0.7 }">
       <!-- Masonry Grid Item -->
-      <ng-masonry-grid-item *ngFor="let item of masonryItems"> 
+      <ng-masonry-grid-item id="{{'masonry-item-'+i}}" *ngFor="let item of masonryItems; let i = index;" (click)="removeItem($event)"> 
         <!-- Grid Content  -->
         <img src="some_image.jpg" alt="No image" />
       </ng-masonry-grid-item>
     </ng-masonry-grid>
   `,
-  styleUrls: ['Path_to/node_modules/ng-masonry-grid/ng-masonry-grid.css'] // point to ng-masonry-grid CSS file
+  styleUrls: ['Path_to/node_modules/ng-masonry-grid/ng-masonry-grid.css'] // point to ng-masonry-grid CSS file (required)
 })
 ```
 
-### Ng Masonry Grid Options
+Note: 'id' on ng-masonry-grid-item required for removeItem, removeAllItems functionality
+
+## Ng Masonry Grid Options
 
 ```typescript
 scrollAnimationOptions = {
@@ -97,6 +99,7 @@ scrollAnimationOptions = {
 useAnimation = true;  // true/false  default: true,  default animation options will be applied if you do not provide scrollAnimationOptions
 
 masonryOptions = {
+   addStatus: 'append', // default: 'append', values from: ['append', 'prepend', 'add'], set status of adding grid items to Masonry
    transitionDuration: '0.4s', // Duration of the transition when items change position or appearance, set in a CSS time format. Default: transitionDuration: '0.4s'
    ...
    // More masonry options available in (http://masonry.desandro.com/options.html)
@@ -105,10 +108,11 @@ masonryOptions = {
 // Unloaded images can throw off Masonry layouts and cause item elements to overlap. imagesLoaded plugin resolves this issue. 
 
 useImagesLoaded = "true"; // default: false, use true incase if of any images to be loaded in grid items
+
 ```
 More masonry options available in [Masonry options by David DeSandro](http://masonry.desandro.com/options.html)
 
-### [Masonry Events](http://masonry.desandro.com/events.html)
+## [Masonry Events](http://masonry.desandro.com/events.html)
 #### layoutComplete: `EventEmitter<any[]>`
 Triggered after a layout and all positioning transitions have completed.
 
@@ -116,15 +120,94 @@ Triggered after a layout and all positioning transitions have completed.
 Triggered after an ng-masonry-grid-item element has been removed.
 
 #### onNgMasonryInit: `EventEmitter<Masonry>`
-Get an instance of Masonry, so that you can use all [Masonry Methods](https://masonry.desandro.com/methods.html) such as reloadItems() etc.
+Get an instance of Masonry, so that you can use all [Masonry Methods](https://masonry.desandro.com/methods.html) such as layout(), reloadItems() etc.
 
 ### Example
 ```html
-<ng-masonry-grid 
+<ng-masonry-grid
     (onNgMasonryInit)="onNgMasonryInit($event)"
     (layoutComplete)="layoutComplete($event)" 
     (removeComplete)="removeGridItem($event)">
+    <ng-masonry-grid-item 
+        id="{{'masonry-item-'+i}}" 
+        *ngFor="let item of masonryItems; let i = index;" 
+        (click)="removeItem($event)">
+    </ng-masonry-grid-item>
 </ng-masonry-grid>
+```
+## Ng Masonry Grid Methods
+```typescript
+import { Masonry, MasonryGridItem } from 'ng-masonry-grid'; // import necessary datatypes
+
+_masonry: Masonry;
+masonryItems: any[]; // NgMasonryGrid Grid item list
+
+// Get ng masonry grid instance first
+onNgMasonryInit($event: Masonry) {
+  this._masonry = $event;
+}
+
+// Append items to NgMasonryGrid
+appendItems() {
+  if (this._masonry) { // Check if Masonry instance exists
+    this._masonry.setAddStatus('append'); // set status to 'append'
+    this.masonryItems.push(...items); // some grid items: items
+  }
+}
+
+// Prepend grid items to NgMasonryGrid
+prependItems() {
+  if (this._masonry) {
+    this._masonry.setAddStatus('prepend'); // set status to 'prepend' before adding items to NgMasonryGrid otherwise default: 'append' will applied
+    this.masonryItems.splice(0, 0, ...items);
+  }
+}
+
+// Add items to NgMasonryGrid
+addItems() {  
+  if (this._masonry) {
+    this._masonry.setAddStatus('add'); // set status to 'add'
+    this.masonryItems.push(...items);
+  }
+}
+
+// Remove selected item from NgMasonryGrid, For example, (click)="removeItem($event)" event binding on grid item
+// Note: 'id' on ng-masonry-grid is required to remove actual item from the list
+removeItem($event: any) {
+  if (this._masonry) {
+    this._masonry.removeItem($event.currentTarget)  // removeItem() expects actual DOM (ng-masonry-grid-item element)
+        .subscribe((item: MasonryGridItem) => { // item: removed grid item from NgMasonryGrid
+          let id = item.element.getAttribute('id'); // Get id attribute and then find index 
+          let index = id.split('-')[2];
+          this.masonryItems.splice(index, 1); // remove grid item from Masonry binding  
+        });
+  }
+}
+
+// Remove first item from NgMasonryGrid
+removeFirstItem() {
+  if (this._masonry) {
+    this._masonry.removeFirstItem()
+        .subscribe( (item: MasonryGridItem) => {
+          let id = item.element.getAttribute('id');
+          let index = id.split('-')[2];
+          this.masonryItems.splice(index, 1);
+        });
+  }
+}
+
+// Remove all items from NgMasonryGrid
+removeAllItems() {
+if (this._masonry) {
+  if (this._masonry) {
+    this._masonry.removeAllItems()
+        .subscribe( (items: MasonryGridItem) => {
+            // remove all item from the list
+            this.masonryItems = [];
+        });
+  }
+}
+
 ```
 
 ## Development
