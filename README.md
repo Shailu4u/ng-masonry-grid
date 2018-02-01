@@ -76,7 +76,7 @@ Once NgMasonryGridModule Module is imported, you can use its components and dire
 })
 ```
 
-Note: 'id' on ng-masonry-grid-item required for removeItem, removeAllItems functionality
+Note: 'id' on ng-masonry-grid-item is required for removeItem, removeAllItems functionality
 
 ## Ng Masonry Grid Options
 
@@ -120,7 +120,7 @@ Triggered after a layout and all positioning transitions have completed.
 Triggered after an ng-masonry-grid-item element has been removed.
 
 #### onNgMasonryInit: `EventEmitter<Masonry>`
-Get an instance of Masonry, so that you can use all [Masonry Methods](https://masonry.desandro.com/methods.html) such as layout(), reloadItems() etc.
+Get an instance of Masonry after intialization, so that you can use all [Masonry Methods](https://masonry.desandro.com/methods.html) such as layout(), reloadItems() etc.
 
 ### Example
 ```html
@@ -158,7 +158,8 @@ appendItems() {
 // Prepend grid items to NgMasonryGrid
 prependItems() {
   if (this._masonry) {
-    this._masonry.setAddStatus('prepend'); // set status to 'prepend' before adding items to NgMasonryGrid otherwise default: 'append' will applied
+    // set status to 'prepend' before adding items to NgMasonryGrid otherwise default: 'append' will applied
+    this._masonry.setAddStatus('prepend');
     this.masonryItems.splice(0, 0, ...items);
   }
 }
@@ -176,10 +177,11 @@ addItems() {
 removeItem($event: any) {
   if (this._masonry) {
     this._masonry.removeItem($event.currentTarget)  // removeItem() expects actual DOM (ng-masonry-grid-item element)
-        .subscribe((item: MasonryGridItem) => { // item: removed grid item from NgMasonryGrid
+        .subscribe((item: MasonryGridItem) => { // item: removed grid item DOM from NgMasonryGrid
           let id = item.element.getAttribute('id'); // Get id attribute and then find index 
           let index = id.split('-')[2];
-          this.masonryItems.splice(index, 1); // remove grid item from Masonry binding  
+          // remove grid item from Masonry binding using index (because actual Masonry items order is different from this.masonryItems items) 
+          this.masonryItems.splice(index, 1); 
         });
   }
 }
@@ -202,7 +204,7 @@ if (this._masonry) {
   if (this._masonry) {
     this._masonry.removeAllItems()
         .subscribe( (items: MasonryGridItem) => {
-            // remove all item from the list
+            // remove all items from the list
             this.masonryItems = [];
         });
   }
