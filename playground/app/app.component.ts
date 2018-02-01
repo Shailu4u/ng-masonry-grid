@@ -5,41 +5,45 @@ import 'rxjs/add/operator/map';
 @Component({
   selector: 'app-root',
   template: `
-  <div class="container-fixed">
-    <ul class="list">
-      <li class="list-item">
-        <button class="btn" (click)="addItems()">Add Items</button>
-      </li>
-      <li class="list-item">
-        <button class="btn" (click)="appendItems()">Append Items</button>
-      </li>
-      <li class="list-item">
-        <button class="btn" (click)="prependItems()">Prepend Items</button>
-      </li>
-      <li class="list-item">
-        <button class="btn" (click)="removeFirstItem()">Remove First Item</button>
-      </li>
-      <li class="list-item">
-        <button class="btn" (click)="removeAllItems()">Remove All Items</button>
-      </li>
-      <li class="list-item" *ngFor="let item of buttons">
-        <button class="btn" [ngClass]="{ 'active': item.active }" (click)="onSelect(item)">Effect {{item.index}}</button>
-      </li>
-    </ul>
-  </div>
-  <div class="container mt100">
-    <h2 style="text-align: center;">Angular 2 module for Masonry layout</h2>
-    <ng-masonry-grid *ngIf="showMasonry"
-                  [masonryOptions]="{ transitionDuration: '0.4s', gutter: 5 }"
-                  [useAnimation]="true"
-                  [useImagesLoaded]="true"
-                  (onNgMasonryInit)="onNgMasonryInit($event)"
-                  [scrollAnimationOptions]="animOptions"
-                  >
-      <ng-masonry-grid-item id="{{'masonry-item-'+i}}" *ngFor="let item of masonryItems; let i = index;" (click)="removeItem($event)">
-      <img [src]="item.src" alt="No image" />
-      </ng-masonry-grid-item>
-    </ng-masonry-grid>
+  <div class="container">
+    <div class="div-1">
+      <h2 style="text-align: center;">Angular 2 module for Masonry layout</h2>
+      <ng-masonry-grid *ngIf="showMasonry"
+                    [masonryOptions]="{ transitionDuration: '0.4s', gutter: 10 }"
+                    [useAnimation]="true"
+                    [useImagesLoaded]="true"
+                    (onNgMasonryInit)="onNgMasonryInit($event)"
+                    [scrollAnimationOptions]="animOptions"
+                    >
+        <ng-masonry-grid-item id="{{'masonry-item-'+i}}" *ngFor="let item of masonryItems; let i = index;" (click)="removeItem($event)">
+        <img [src]="item.src" alt="No image" />
+        </ng-masonry-grid-item>
+      </ng-masonry-grid>
+    </div>
+    <div class="div-2">
+      <div class="container-fixed">
+        <ul class="list">
+          <li class="list-item">
+            <button class="btn" (click)="addItems()">Add Items</button>
+          </li>
+          <li class="list-item">
+            <button class="btn" (click)="appendItems()">Append Items</button>
+          </li>
+          <li class="list-item">
+            <button class="btn" (click)="prependItems()">Prepend Items</button>
+          </li>
+          <li class="list-item">
+            <button class="btn" (click)="removeFirstItem()">Remove First Item</button>
+          </li>
+          <li class="list-item">
+            <button class="btn" (click)="removeAllItems()">Remove All Items</button>
+          </li>
+          <li class="list-item" *ngFor="let item of buttons">
+            <button class="btn" [ngClass]="{ 'active': item.active }" (click)="onSelect(item)">Effect {{item.index}}</button>
+          </li>
+        </ul>
+      </div>
+    </div>
   </div>
 `,
 styleUrls: ['../../node_modules/ng-masonry-grid/ng-masonry-grid.css', './app.component.css'] // point to ng masonry grid css

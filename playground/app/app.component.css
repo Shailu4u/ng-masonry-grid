@@ -1,5 +1,5 @@
 .container {
-    width: 70%;
+    width: 90%;
     margin: 0 auto;
 }
 
@@ -33,9 +33,20 @@
 
 .container-fixed {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
+    top: 100px;
+    height: 100%;
     z-index: 1;
     background-color: #fff;
+}
+
+.div-1 {
+    width: 80%;
+}
+
+.div-2 {
+    width: 20%;
+}
+
+.div-1, .div-2 {
+    float: left;
 }
