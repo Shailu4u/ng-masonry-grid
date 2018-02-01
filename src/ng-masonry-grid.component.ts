@@ -65,7 +65,7 @@ export class NgMasonryGridComponent
   ) {}
 
   ngOnInit() {
-    this._element.nativeElement.classList += ' grid';
+    this._element.nativeElement.classList.add('grid');
     this.initializeMasonry();
   }
 
@@ -99,58 +99,47 @@ export class NgMasonryGridComponent
 
   public initializeMasonry() {
     // initialize Masonry with Animation effects
-    // this._masonrySubscription = this.masonryGridService
-    //   .init(
-    //     this._element.nativeElement,
-    //     this.masonryOptions,
-    //     this.useAnimation,
-    //     this.scrollAnimationOptions,
-    //     this.useImagesLoaded
-    //   )
-    //   .subscribe(msnry => {
-    //   });
+    this._msnry = this.masonryGridService
+    .init(
+      this._element.nativeElement,
+      this.masonryOptions,
+      this.useAnimation,
+      this.scrollAnimationOptions,
+      this.useImagesLoaded
+    );
 
-      this._msnry = this.masonryGridService
-      .init(
-        this._element.nativeElement,
-        this.masonryOptions,
-        this.useAnimation,
-        this.scrollAnimationOptions,
-        this.useImagesLoaded
-      );
+    // Bind to Masonry events
+    this._msnry.on('layoutComplete', (items: any) => {
+      this.layoutComplete.emit(items);
+    });
 
-      // Bind to Masonry events
-      this._msnry.on('layoutComplete', (items: any) => {
-        this.layoutComplete.emit(items);
-      });
+    this._msnry.on('removeComplete', (items: any) => {
+      this.removeComplete.emit(items);
+    });
 
-      this._msnry.on('removeComplete', (items: any) => {
-        this.removeComplete.emit(items);
-      });
+    this._msnry.removeAnimation = () => {
+      this.masonryGridService.removeAnimation();
+    };
 
-      this._msnry.removeAnimation = () => {
-        this.masonryGridService.removeAnimation();
-      };
+    this._msnry.setAddStatus = (value: string) => {
+      this.masonryGridService.setAddStatus(value);
+    }
 
-      this._msnry.setAddStatus = (value: string) => {
-        this.masonryGridService.setAddStatus(value);
-      }
+    this._msnry.removeItem = (item: Element): Observable<MasonryGridItem> => {
+      return this.masonryGridService.removeItem(item);
+    }
 
-      this._msnry.removeItem = (item: Element): Observable<MasonryGridItem> => {
-        return this.masonryGridService.removeItem(item);
-      }
+    this._msnry.removeFirstItem = (): Observable<MasonryGridItem> => {
+      return this.masonryGridService.removeFirstItem();
+    }
 
-      this._msnry.removeFirstItem = (): Observable<MasonryGridItem> => {
-        return this.masonryGridService.removeFirstItem();
-      }
+    this._msnry.removeAllItems = (): Observable<MasonryGridItem> => {
+      return this.masonryGridService.removeAllItems();
+    }
 
-      this._msnry.removeAllItems = (): Observable<MasonryGridItem> => {
-        return this.masonryGridService.removeAllItems();
-      }
+    // emit Masonry Initialization event
+    this.onNgMasonryInit.emit(this._msnry);
 
-      // emit Masonry Initialization event
-      this.onNgMasonryInit.emit(this._msnry);
-
-      this.layout();
+    this.layout();
   }
 }

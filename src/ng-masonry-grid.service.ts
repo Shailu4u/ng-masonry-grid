@@ -9,8 +9,7 @@ import { MasonryOptions, Masonry as IMasonry, AnimationOptions,
         ImagesLoadedConstructor, MasonryGridItem } from './ng-masonry-grid.interface';
 
 import { Observable } from 'rxjs/Observable';
-import {EmptyObservable} from 'rxjs/observable/EmptyObservable';
-import { Subject } from 'rxjs/Subject';
+import { EmptyObservable } from 'rxjs/observable/EmptyObservable';
 
 declare var require: any;
 
@@ -50,14 +49,13 @@ export class NgMasonryGridService {
   masonryDefaults: MasonryOptions = {
     // Set default itemSelector: mandatory
     itemSelector: '[ng-masonry-grid-item], ng-masonry-grid-item, [ng-masonry-grid-item].animate, ng-masonry-grid-item.animate',
-    addStatus: 'append'
+    addStatus: 'append' // 'prepend' or 'add'
   }
 
   constructor( @Inject(PLATFORM_ID) private _platformId: any  ) {
       this._onScrollHandler = this._onScrollFn.bind(this);
       this._onResizeHandler = this._resizeHandler.bind(this);
   }
-
 
   getViewportH() {
     let client = this.docElem['clientHeight'],
@@ -68,7 +66,6 @@ export class NgMasonryGridService {
     }    else {
       return client;
     }
-
   }
 
   scrollY() {
@@ -138,7 +135,7 @@ export class NgMasonryGridService {
     if (this.isAnimate) {
       this.classie = require('desandro-classie');
       // add animation effect
-      this.el.classList += ' ' + this.animationOptions.animationEffect;
+      this.el.classList.add(this.animationOptions.animationEffect);
     }
 
     if (this.useImagesLoaded) {
@@ -156,11 +153,7 @@ export class NgMasonryGridService {
     // initialize masonry
     this._msnry = this.initializeMasonry(this.el, this.masonryOptions);
 
-    if ((this.useAnimation || this.isAnimate) && this._msnry) {
-
-      // this._msnry.once('layoutComplete', (items: any) => {
-      //   this._layoutComplete(items);
-      // });
+    if (this.isAnimate && this._msnry) {
 
       // animate on scroll the items inside the viewport
       window.addEventListener( 'scroll', this._onScrollHandler, false );
@@ -194,11 +187,6 @@ export class NgMasonryGridService {
       if ( this.inViewport( el ) ) {
         this._checkTotalRendered();
       }
-      // setTimeout(() => {
-      //   el.addEventListener('webkitAnimationEnd', (event) => {
-      //     self.classie.remove( el, 'animate' );
-      //   }, false);
-      // }, 500);
     });
   }
 
@@ -231,14 +219,6 @@ export class NgMasonryGridService {
             }
 
             this.classie.add( el, 'animate' );
-            // setTimeout( () => {
-            //   this.classie.remove( el, 'animate' );
-            // }, 1000);
-            // el.addEventListener('webkitAnimationEnd', (event) => {
-            //    setTimeout( () => {
-            //     self.classie.remove( el, 'animate' );
-            //   }, 2000);
-            // }, false);
           }, 25 );
         } else {
            this.classie.remove( el, 'animate' );
@@ -320,7 +300,7 @@ export class NgMasonryGridService {
         });
       }, 0);
     } else {
-     // this.el.removeChild(element);
+
       if (addStatus === 'prepend') {
         if (this._msnry.items.length !== 0) {
           this.el.insertBefore(element, this._msnry.items[0].element);

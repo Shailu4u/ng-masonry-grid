@@ -38,7 +38,6 @@ import {
     ) {}
 
     ngOnInit() {
-      // this._element.nativeElement.classList += ' masonry-item';
       // this._parent.add(this._element.nativeElement);
     }
 
