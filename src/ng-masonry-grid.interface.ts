@@ -53,6 +53,7 @@ export class Masonry {
     data?(element: Element): Masonry;
     removeAnimation?(): void;
     setAddStatus?(value: string): void;
+    removeItem?(item: Element): Observable<MasonryGridItem>;
     removeFirstItem?(): Observable<MasonryGridItem>;
     removeAllItems?(): Observable<MasonryGridItem>;
 

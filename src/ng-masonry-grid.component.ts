@@ -136,6 +136,10 @@ export class NgMasonryGridComponent
         this.masonryGridService.setAddStatus(value);
       }
 
+      this._msnry.removeItem = (item: Element): Observable<MasonryGridItem> => {
+        return this.masonryGridService.removeItem(item);
+      }
+
       this._msnry.removeFirstItem = (): Observable<MasonryGridItem> => {
         return this.masonryGridService.removeFirstItem();
       }

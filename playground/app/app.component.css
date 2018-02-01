@@ -1,5 +1,5 @@
 .container {
-    width: 90%;
+    width: 70%;
     margin: 0 auto;
 }
 
@@ -25,4 +25,17 @@
 .btn.active, .btn:hover, .btn-focus {
     background-color: chocolate;
     color: #fff;
+}
+
+.mt100 {
+    margin-top: 80px;
+}
+
+.container-fixed {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1;
+    background-color: #fff;
 }
