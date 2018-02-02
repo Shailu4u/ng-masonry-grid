@@ -27,7 +27,6 @@ export class NgMasonryGridService {
   useAnimation: boolean;
   isAnimate = false;
   public _msnry: IMasonry;
-  public classie: any;
   _onScrollHandler: any;
   _onResizeHandler: any;
   useImagesLoaded: boolean;
@@ -133,7 +132,6 @@ export class NgMasonryGridService {
   private _init(): IMasonry {
 
     if (this.isAnimate) {
-      this.classie = require('desandro-classie');
       // add animation effect
       this.el.classList.add(this.animationOptions.animationEffect);
     }
@@ -161,13 +159,13 @@ export class NgMasonryGridService {
 
       this._msnry.on('layoutComplete', (items: any) => {
         Array.prototype.slice.call(this.el.children).forEach( (element: any) => {
-          this.classie.remove( element, 'animate' );
+          element.classList.remove('animate');
         });
       });
 
       this._msnry.on('removeComplete', (items: any) => {
         Array.prototype.slice.call(this.el.children).forEach( (element: any) => {
-          this.classie.remove( element, 'animate' );
+          element.classList.remove('animate');
         });
         this._msnry.layout();
       });
@@ -204,7 +202,7 @@ export class NgMasonryGridService {
     if (items.length) {
       items.forEach( ( el, i ) => {
         if ( this.inViewport( el, self.animationOptions.viewportFactor ) ) {
-          setTimeout( () => {
+          // setTimeout( () => {
             let perspY = this.scrollY() + this.getViewportH() / 2;
             self.el.style.WebkitPerspectiveOrigin = '50% ' + perspY + 'px';
             self.el.style.MozPerspectiveOrigin = '50% ' + perspY + 'px';
@@ -217,11 +215,10 @@ export class NgMasonryGridService {
               el.style.MozAnimationDuration = randDuration;
               el.style.animationDuration = randDuration;
             }
-
-            this.classie.add( el, 'animate' );
-          }, 25 );
+            el.classList.add('animate');
+         // }, 25 );
         } else {
-           this.classie.remove( el, 'animate' );
+           el.classList.remove('animate');
         }
       });
     }
@@ -232,7 +229,7 @@ export class NgMasonryGridService {
   private _resizeHandler() {
     let self = this;
     Array.prototype.slice.call(this.el.children).forEach( (element: any) => {
-      self.classie.remove( element, 'animate' );
+      element.classList.remove('animate');
     });
 
     function delayed() {
@@ -260,7 +257,7 @@ export class NgMasonryGridService {
   public removeAnimation() {
     if (this.isAnimate) {
       Array.prototype.slice.call(this.el.children).forEach( (element: any) => {
-        this.classie.remove( element, 'animate' );
+        element.classList.remove('animate');
       });
     }
   }

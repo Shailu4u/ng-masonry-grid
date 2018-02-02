@@ -1,6 +1,6 @@
 {
   "name": "ng-masonry-grid",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Angular 2+ masonry grid component with CSS3 animations on scroll.",
   "scripts": {
     "build": "gulp build",
@@ -16,7 +16,15 @@
     "email": "shailu.snist@gmail.com"
   },
   "keywords": [
-    "angular"
+    "angular2-masonry", 
+    "masonry",
+    "masonry layout",
+    "desandro",
+    "angular4-masonry",
+    "masonry animations",
+    "ng2 masonry",
+    "ng masonry",
+    "ng2 masonry layout"
   ],
   "license": "MIT",
   "bugs": {
@@ -66,7 +74,6 @@
   },
   "dependencies": {
     "classlist.js": "^1.1.20150312",
-    "desandro-classie": "^1.0.1",
     "imagesloaded": "^4.1.4",
     "masonry-layout": "^4.2.1",
     "web-animations-js": "^2.3.1"
