@@ -12,7 +12,7 @@ Preview: https://ng-masonry-grid-demo.herokuapp.com/
 First install Peer dependencies
 
 ```bash
-$ npm install masonry-layout desandro-classie imagesloaded --save
+$ npm install masonry-layout imagesloaded --save
 ```
 
 To install ng-masonry-grid library, run:
