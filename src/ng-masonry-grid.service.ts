@@ -369,15 +369,17 @@ export class NgMasonryGridService {
   public removeItem(item: Element): Observable<MasonryGridItem> {
     this.removeAnimation();
     if (item) {
+      item.classList.remove('animate');
       const obsv = new Observable(observer => {
         let count = item.getAttribute('data-count');
         let index = this._msnry.items.findIndex( (masonryItem: any) => {
-           return masonryItem.element.getAttribute('data-count') === count;
+            return masonryItem.element.getAttribute('data-count') === count;
         });
-        const elem = this._msnry.items[index].element;
-        this._onTransitionEnd(observer, elem);
+        setTimeout(() => {
+          const elem = this._msnry.items[index].element;
+          this._onTransitionEnd(observer, elem);
+        }, 10);
       });
-
       return obsv;
     }
 
@@ -390,10 +392,12 @@ export class NgMasonryGridService {
   public removeFirstItem(): Observable<MasonryGridItem> {
     this.removeAnimation();
     if (this._msnry.items.length) {
+      this._msnry.items[0].element.classList.remove('animate');
       const obsv = new Observable(observer => {
-        this._onTransitionEnd(observer, this._msnry.items[0].element);
+        setTimeout(() => {
+          this._onTransitionEnd(observer, this._msnry.items[0].element);
+        }, 10);
       });
-
       return obsv;
     }
 
@@ -406,21 +410,23 @@ export class NgMasonryGridService {
   public removeAllItems(): Observable<MasonryGridItem> {
     this.removeAnimation();
     const obsv = new Observable(observer => {
-      let items: MasonryGridItem[] = [];
-      this._msnry.items.forEach( (masonryItem: any, index: number) => {
-        items.push({ element: masonryItem.element, index });
-        this.addTransition(masonryItem.element);
-      });
-      const elem = this._msnry.items[this._msnry.items.length - 1].element;
-      const transitionEnd = () => {
-        observer.next(items);
-        setTimeout(() => {
-          this._msnry.reloadItems();
-          this._msnry.layout();
-        }, 10);
-        elem.removeEventListener('transitionend', transitionEnd, false);
-      };
-      elem.addEventListener('transitionend', transitionEnd , false);
+      setTimeout(() => {
+        let items: MasonryGridItem[] = [];
+        this._msnry.items.forEach( (masonryItem: any, index: number) => {
+          items.push({ element: masonryItem.element, index });
+          this.addTransition(masonryItem.element);
+        });
+        const elem = this._msnry.items[this._msnry.items.length - 1].element;
+        const transitionEnd = () => {
+          observer.next(items);
+          setTimeout(() => {
+            this._msnry.reloadItems();
+            this._msnry.layout();
+          }, 10);
+          elem.removeEventListener('transitionend', transitionEnd, false);
+        };
+        elem.addEventListener('transitionend', transitionEnd , false);
+      }, 10);
     });
 
     return obsv;

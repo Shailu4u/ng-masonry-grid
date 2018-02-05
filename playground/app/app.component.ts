@@ -122,9 +122,11 @@ export class AppComponent implements OnDestroy {
     if (this._masonry) {
       this._removeItemSubscription = this._masonry.removeItem($event.currentTarget)
           .subscribe((item: MasonryGridItem) => {
+           if (item) {
             let id = item.element.getAttribute('id');
             let index = id.split('-')[2];
             this.masonryItems.splice(index, 1);
+           }
           });
     }
   }
@@ -155,9 +157,11 @@ export class AppComponent implements OnDestroy {
     if (this._masonry) {
       this._removeFirstItemSubscription = this._masonry.removeFirstItem()
           .subscribe( (item: MasonryGridItem) => {
-            let id = item.element.getAttribute('id');
-            let index = id.split('-')[2];
-            this.masonryItems.splice(index, 1);
+            if (item) {
+              let id = item.element.getAttribute('id');
+              let index = id.split('-')[2];
+              this.masonryItems.splice(index, 1);
+            }
          });
     }
   }
