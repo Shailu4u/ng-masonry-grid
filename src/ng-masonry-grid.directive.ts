@@ -55,9 +55,6 @@ import {
     }
 
     ngOnDestroy() {
-      if (isPlatformBrowser(this.platformId)) {
-        this._parent.remove(this._element.nativeElement);
-      }
     }
 
     /** When HTML in brick changes dynamically, observe that and change layout */

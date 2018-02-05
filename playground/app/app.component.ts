@@ -101,11 +101,13 @@ export class AppComponent implements OnDestroy {
   }
 
   getRandomInt(min: number, max: number) {
-    return Math.floor(Math.random() * (max - min + 1) + min);
+    return  Math.floor( Math.random() * max + min );
   }
 
   getSrc() {
-    return '../assets/images/' + this.getRandomInt(1, 15) + '.jpg';
+    const width = this.getRandomInt( 300, 400 );
+    const height = this.getRandomInt( 300, 500 );
+    return 'http://lorempixel.com/'  + width + '/' + height + '/nature';
   }
 
   onNgMasonryInit($event: Masonry) {

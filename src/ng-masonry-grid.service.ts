@@ -10,6 +10,7 @@ import { MasonryOptions, Masonry as IMasonry, AnimationOptions,
 
 import { Observable } from 'rxjs/Observable';
 import { EmptyObservable } from 'rxjs/observable/EmptyObservable';
+import { Subscriber } from 'rxjs/Subscriber';
 
 declare var require: any;
 
@@ -373,11 +374,8 @@ export class NgMasonryGridService {
         let index = this._msnry.items.findIndex( (masonryItem: any) => {
            return masonryItem.element.getAttribute('data-count') === count;
         });
-        observer.next({ element: this._msnry.items[index].element });
-        this._msnry.remove(this._msnry.items[index].element);
-        setTimeout( () => {
-          this._msnry.layout();
-        });
+        const elem = this._msnry.items[index].element;
+        this._onTransitionEnd(observer, elem);
       });
 
       return obsv;
@@ -393,15 +391,7 @@ export class NgMasonryGridService {
     this.removeAnimation();
     if (this._msnry.items.length) {
       const obsv = new Observable(observer => {
-        let count = this._msnry.items[0].element.getAttribute('data-count');
-        let index = Array.prototype.slice.call(this.el.children).findIndex( (element: any) => {
-           return element.getAttribute('data-count') === count;
-        });
-        // this._msnry.remove(this._msnry.items[0].element);
-        observer.next({ element: this._msnry.items[0].element, index: index });
-        setTimeout( () => {
-          this._msnry.layout();
-        });
+        this._onTransitionEnd(observer, this._msnry.items[0].element);
       });
 
       return obsv;
@@ -417,16 +407,57 @@ export class NgMasonryGridService {
     this.removeAnimation();
     const obsv = new Observable(observer => {
       let items: MasonryGridItem[] = [];
-      Array.prototype.slice.call(this.el.children).forEach( (element: any, index: number) => {
-        items.push({ element, index });
-        this._msnry.remove(element);
+      this._msnry.items.forEach( (masonryItem: any, index: number) => {
+        items.push({ element: masonryItem.element, index });
+        this.addTransition(masonryItem.element);
       });
-      if (this._msnry.items.length === 0) {
+      const elem = this._msnry.items[this._msnry.items.length - 1].element;
+      const transitionEnd = () => {
         observer.next(items);
-      }
-
+        setTimeout(() => {
+          this._msnry.reloadItems();
+          this._msnry.layout();
+        }, 10);
+        elem.removeEventListener('transitionend', transitionEnd, false);
+      };
+      elem.addEventListener('transitionend', transitionEnd , false);
     });
 
     return obsv;
+  }
+
+  /**
+   * Add transition effect on DOM Node removal
+   * @param elem: Grid item DOM element
+   */
+  public addTransition(elem: any) {
+    elem.style.transition = 'transform ' + this.masonryOptions.transitionDuration + ', opacity ' + this.masonryOptions.transitionDuration;
+    elem.style.transform = 'scale(0.001)';
+    elem.style.opacity = '0';
+  }
+
+  /**
+   * On transition End, remove eventListener
+   * @param observer Subscriber<MasonryGridItem>
+   * @param elem: Grid item DOM element
+   */
+  private _onTransitionEnd(observer: Subscriber<MasonryGridItem>, elem: Element) {
+    if (elem) {
+      this.addTransition(elem);
+      const transitionEnd = () => {
+        let isindex = Array.prototype.slice.call(this.el.children).findIndex( (element: any) => {
+          return element.getAttribute('data-count') === elem.getAttribute('data-count');
+        });
+        if (isindex !== -1) {
+          observer.next({ element: elem, index: isindex });
+        }
+        setTimeout(() => {
+          this._msnry.reloadItems();
+          this._msnry.layout();
+        }, 10);
+        elem.removeEventListener('transitionend', transitionEnd, false);
+      };
+      elem.addEventListener('transitionend', transitionEnd , false);
+    }
   }
 }
