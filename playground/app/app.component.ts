@@ -105,9 +105,11 @@ export class AppComponent implements OnDestroy {
   }
 
   getSrc() {
-    const width = this.getRandomInt( 300, 400 );
-    const height = this.getRandomInt( 300, 500 );
-    return 'http://lorempixel.com/'  + width + '/' + height + '/nature';
+    // const width = this.getRandomInt( 300, 400 );
+    // const height = this.getRandomInt( 300, 500 );
+    // return 'http://lorempixel.com/'  + width + '/' + height + '/nature';
+
+    return '../assets/images/' + this.getRandomInt(1, 15) + '.jpg';
   }
 
   onNgMasonryInit($event: Masonry) {
