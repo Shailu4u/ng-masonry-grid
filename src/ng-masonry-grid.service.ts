@@ -3,7 +3,7 @@
  * @ignore
  */
 
-import { Injectable, ElementRef, PLATFORM_ID, Inject } from '@angular/core';
+import { Injectable, PLATFORM_ID, Inject } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { MasonryOptions, Masonry as IMasonry, AnimationOptions,
         ImagesLoadedConstructor, MasonryGridItem } from './ng-masonry-grid.interface';
@@ -34,6 +34,9 @@ export class NgMasonryGridService {
 
   docElem = window.document.documentElement;
 
+  /**
+   * Default animation options of grid items on scroll
+   */
   animationDefaults: AnimationOptions = {
     animationEffect: 'effect-1', // default animation effect-1
     // Minimum and a maximum duration of the animation (random value is chosen)
@@ -45,6 +48,9 @@ export class NgMasonryGridService {
     viewportFactor : 0
   }
 
+  /**
+   * Default masonry options
+   */
   masonryDefaults: MasonryOptions = {
     // Set default itemSelector: mandatory
     itemSelector: '[ng-masonry-grid-item], ng-masonry-grid-item, [ng-masonry-grid-item].animate, ng-masonry-grid-item.animate',
@@ -111,6 +117,14 @@ export class NgMasonryGridService {
     return a;
   }
 
+  /**
+   * Initialize and extend all options
+   * @param el: Masonry Container DOM Element
+   * @param masonryOptions: User defined Masonry Options
+   * @param useAnimation: User defined Animation (Boolean)
+   * @param animationOptions: User defined Animation options
+   * @param useImagesLoaded: User defined imagesloaded (Boolean)
+   */
   public init(el: any, masonryOptions: MasonryOptions, useAnimation?: boolean,
     animationOptions?: AnimationOptions, useImagesLoaded?: boolean): IMasonry {
     this.useAnimation = useAnimation;
@@ -136,10 +150,12 @@ export class NgMasonryGridService {
       this.el.classList.add(this.animationOptions.animationEffect);
     }
 
+    // get imagesloaded libary instance
     if (this.useImagesLoaded) {
        this.imagesLoaded = require('imagesloaded');
     }
 
+    // check if browser and then intialize Masonry
     if (isPlatformBrowser(this._platformId)) {
       return this._initMasonry();
     }
@@ -151,12 +167,16 @@ export class NgMasonryGridService {
     // initialize masonry
     this._msnry = this.initializeMasonry(this.el, this.masonryOptions);
 
+    // use animation options if useAnimation is true
     if (this.isAnimate && this._msnry) {
 
       // animate on scroll the items inside the viewport
       window.addEventListener( 'scroll', this._onScrollHandler, false );
       window.addEventListener( 'resize', this._onResizeHandler, false );
 
+      /**
+       * Remove scroll animations to remove conflicts between Masonry Transitions and Scroll Animations
+       */
       this._msnry.on('layoutComplete', (items: any) => {
         Array.prototype.slice.call(this.el.children).forEach( (element: any) => {
           element.classList.remove('animate');
@@ -242,6 +262,9 @@ export class NgMasonryGridService {
     this.resizeTimeout = setTimeout( delayed, 500 );
   }
 
+  /**
+   * Check if total grid items are redered in the DOM
+   */
   private _checkTotalRendered() {
     ++this.itemsRenderedCount;
     if ( this.itemsRenderedCount === this.itemsCount ) {
@@ -249,11 +272,17 @@ export class NgMasonryGridService {
     }
   }
 
+  /**
+   * On Destroy remove Scroll and Resize event Listeners
+   */
   public onDestory() {
     window.removeEventListener( 'scroll', this._onScrollHandler, false );
     window.removeEventListener( 'resize', this._onResizeHandler, false );
   }
 
+  /**
+   * Remove scroll animations
+   */
   public removeAnimation() {
     if (this.isAnimate) {
       Array.prototype.slice.call(this.el.children).forEach( (element: any) => {
@@ -262,6 +291,11 @@ export class NgMasonryGridService {
     }
   }
 
+  /**
+   * Add Each grid item to Masonry based on Masony addStatus property
+   * @param element Element - Grid item
+   * @param count  A unique count of each added grid item
+   */
   public add(element, count) {
     let addStatus = this.masonryOptions.addStatus.toLowerCase();
 
@@ -319,10 +353,18 @@ export class NgMasonryGridService {
 
   }
 
+  /**
+   * Set add status to Masonry before adding or appending
+   * @param value 'append' or 'prepend' or 'add'
+   */
   public setAddStatus(value: string) {
     this.masonryOptions.addStatus = value;
   }
 
+  /**
+   * Remove grid item from Masonry
+   * @param item Element: Removed Grid Item DOM
+   */
   public removeItem(item: Element): Observable<MasonryGridItem> {
     this.removeAnimation();
     if (item) {
@@ -344,6 +386,9 @@ export class NgMasonryGridService {
     return new EmptyObservable();
   }
 
+  /**
+   * Remove first grid item from the Masonry List
+   */
   public removeFirstItem(): Observable<MasonryGridItem> {
     this.removeAnimation();
     if (this._msnry.items.length) {
@@ -365,6 +410,9 @@ export class NgMasonryGridService {
     return new EmptyObservable();
   }
 
+  /**
+   * Empty the Masonry list
+   */
   public removeAllItems(): Observable<MasonryGridItem> {
     this.removeAnimation();
     const obsv = new Observable(observer => {

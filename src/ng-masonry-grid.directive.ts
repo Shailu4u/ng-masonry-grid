@@ -41,6 +41,9 @@ import {
       // this._parent.add(this._element.nativeElement);
     }
 
+    /**
+     * Add Masonry grid item after view initialization
+     */
     ngAfterViewInit() {
       if (isPlatformBrowser(this.platformId)) {
         this._parent.gridItemCount++;

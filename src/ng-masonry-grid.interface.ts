@@ -1,10 +1,16 @@
 import { Observable } from 'rxjs/Observable';
 
+/**
+ * Masonry Grid item
+ */
 export class MasonryGridItem {
-  element?: any;
-  index?: number; // Grid item static order index inside ng-masonry-grid container
+  element?: any; // Grid item DOM element itself
+  index?: number; // Grid item data-count attribute static order index inside ng-masonry-grid container
 }
 
+/**
+ * Masonry Options
+ */
 export interface MasonryOptions {
     // layout
     itemSelector?: string;
@@ -24,6 +30,9 @@ export interface MasonryOptions {
     initLayout?: boolean;
 }
 
+/**
+ * Masonry Object
+ */
 export class Masonry {
     items?: any[];
     masonry?(): void;
@@ -60,6 +69,9 @@ export class Masonry {
     constructor(selector: string | Element, options?: MasonryOptions) {};
 }
 
+/**
+ * Scroll Animation options
+ */
 export interface AnimationOptions {
     animationEffect?: string,
     minDuration?: number;
