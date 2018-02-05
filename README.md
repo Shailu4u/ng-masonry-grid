@@ -178,10 +178,12 @@ removeItem($event: any) {
   if (this._masonry) {
     this._masonry.removeItem($event.currentTarget)  // removeItem() expects actual DOM (ng-masonry-grid-item element)
         .subscribe((item: MasonryGridItem) => { // item: removed grid item DOM from NgMasonryGrid
-          let id = item.element.getAttribute('id'); // Get id attribute and then find index 
-          let index = id.split('-')[2];
-          // remove grid item from Masonry binding using index (because actual Masonry items order is different from this.masonryItems items) 
-          this.masonryItems.splice(index, 1); 
+          if (item) {
+            let id = item.element.getAttribute('id'); // Get id attribute and then find index 
+            let index = id.split('-')[2];
+            // remove grid item from Masonry binding using index (because actual Masonry items order is different from this.masonryItems items) 
+            this.masonryItems.splice(index, 1); 
+          }
         });
   }
 }
@@ -191,9 +193,11 @@ removeFirstItem() {
   if (this._masonry) {
     this._masonry.removeFirstItem()
         .subscribe( (item: MasonryGridItem) => {
-          let id = item.element.getAttribute('id');
-          let index = id.split('-')[2];
-          this.masonryItems.splice(index, 1);
+          if (item) {
+            let id = item.element.getAttribute('id');
+            let index = id.split('-')[2];
+            this.masonryItems.splice(index, 1);
+          }
         });
   }
 }
