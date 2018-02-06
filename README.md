@@ -5,7 +5,7 @@ Angular 2+ masonry grid component with CSS animations on scroll.
 [![npm version](https://badge.fury.io/js/ng-masonry-grid.svg)](https://badge.fury.io/js/ng-masonry-grid)
 [![Dependency Status](https://beta.gemnasium.com/badges/github.com/Shailu4u/ng-masonry-grid.svg)](https://beta.gemnasium.com/projects/github.com/Shailu4u/ng-masonry-grid)
 
-Preview: https://ng-masonry-grid-demo.herokuapp.com/ 
+Demo: https://ng-masonry-grid.stackblitz.io/ 
 
 ## Installation
 
