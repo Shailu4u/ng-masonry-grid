@@ -204,13 +204,20 @@ removeFirstItem() {
 
 // Remove all items from NgMasonryGrid
 removeAllItems() {
-if (this._masonry) {
   if (this._masonry) {
     this._masonry.removeAllItems()
         .subscribe( (items: MasonryGridItem) => {
             // remove all items from the list
             this.masonryItems = [];
         });
+  }
+}
+
+// reorder items to original position
+// Note: Add masonry option:- horizontalOrder: true
+reorderItems() {
+  if (this._masonry) {
+      this._masonry.reOrderItems();
   }
 }
 
