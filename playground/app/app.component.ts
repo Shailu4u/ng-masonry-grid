@@ -9,14 +9,14 @@ import 'rxjs/add/operator/map';
     <div class="div-1">
       <h2 style="text-align: center;">Angular 2 module for Masonry layout</h2>
       <ng-masonry-grid *ngIf="showMasonry"
-                    [masonryOptions]="{ transitionDuration: '0.4s', gutter: 10 }"
+                    [masonryOptions]="{ transitionDuration: '0.4s', gutter: 10, horizontalOrder: true }"
                     [useAnimation]="true"
                     [useImagesLoaded]="true"
                     (onNgMasonryInit)="onNgMasonryInit($event)"
                     [scrollAnimationOptions]="animOptions"
                     >
-        <ng-masonry-grid-item id="{{'masonry-item-'+i}}" *ngFor="let item of masonryItems; let i = index;" (click)="removeItem($event)">
-        <img [src]="item.src" alt="No image" />
+        <ng-masonry-grid-item id="{{'masonry-item-'+ (i)}}" *ngFor="let item of masonryItems; let i = index;" (click)="removeItem($event)">
+        {{item.count + 1}}<img [src]="item.src" alt="No image" />
         </ng-masonry-grid-item>
       </ng-masonry-grid>
     </div>
@@ -31,6 +31,9 @@ import 'rxjs/add/operator/map';
           </li>
           <li class="list-item">
             <button class="btn" (click)="prependItems()">Prepend Items</button>
+          </li>
+          <li class="list-item">
+            <button class="btn" (click)="reorderItems()">ReOrder Items</button>
           </li>
           <li class="list-item">
             <button class="btn" (click)="removeFirstItem()">Remove First Item</button>
@@ -166,7 +169,7 @@ export class AppComponent implements OnDestroy {
     }
   }
 
-  // done
+  // remove all items
   removeAllItems() {
     if (this._masonry) {
       this._removeAllSubscription =
@@ -175,6 +178,13 @@ export class AppComponent implements OnDestroy {
            // remove item from the list
            this.masonryItems = [];
         });
+    }
+  }
+
+  // reorder items to original position
+  reorderItems() {
+    if (this._masonry) {
+        this._masonry.reOrderItems();
     }
   }
 }

@@ -44,8 +44,6 @@ export class NgMasonryGridComponent
   implements OnInit, OnDestroy, AfterContentInit {
   public _msnry: IMasonry;
 
-  public gridItemCount = 0;
-
   // Inputs
   @Input() public masonryOptions: MasonryOptions = {};
   @Input() public useAnimation = false;
@@ -94,7 +92,7 @@ export class NgMasonryGridComponent
   }
 
   public add(element: HTMLElement) {
-    this.masonryGridService.add(element, this.gridItemCount);
+    this.masonryGridService.add(element);
   }
 
   public initializeMasonry() {
@@ -135,6 +133,10 @@ export class NgMasonryGridComponent
 
     this._msnry.removeAllItems = (): Observable<MasonryGridItem> => {
       return this.masonryGridService.removeAllItems();
+    }
+
+    this._msnry.reOrderItems = (): void => {
+      return this.masonryGridService.reorderMasonryItems();
     }
 
     // emit Masonry Initialization event

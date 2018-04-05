@@ -21,8 +21,8 @@ export class NgMasonryGridService {
   masonryOptions: MasonryOptions;
   animationOptions: AnimationOptions;
   items: Array<any> = [];
-  itemsCount: number;
-  itemsRenderedCount: number;
+  itemsCount: number = 0;
+  itemsRenderedCount: number = 0;
   didScroll: boolean;
   resizeTimeout: any;
   useAnimation: boolean;
@@ -55,7 +55,8 @@ export class NgMasonryGridService {
   masonryDefaults: MasonryOptions = {
     // Set default itemSelector: mandatory
     itemSelector: '[ng-masonry-grid-item], ng-masonry-grid-item, [ng-masonry-grid-item].animate, ng-masonry-grid-item.animate',
-    addStatus: 'append' // 'prepend' or 'add'
+    initLayout: false,
+    addStatus: 'append' // 'prepend' or 'add' or 'reorder'
   }
 
   constructor( @Inject(PLATFORM_ID) private _platformId: any  ) {
@@ -195,20 +196,6 @@ export class NgMasonryGridService {
     return this._msnry;
   }
 
-  private _layoutComplete(items: any) {
-    let self = this;
-    this.items = items.map((item) => item.element);
-    this.itemsCount = this.items.length;
-    this.didScroll = false;
-    this.itemsRenderedCount = 0;
-    // the items already shown...
-    this.items.forEach( ( el, i ) => {
-      if ( this.inViewport( el ) ) {
-        this._checkTotalRendered();
-      }
-    });
-  }
-
   private _onScrollFn() {
     let self = this;
     if ( !this.didScroll ) {
@@ -295,9 +282,8 @@ export class NgMasonryGridService {
   /**
    * Add Each grid item to Masonry based on Masony addStatus property
    * @param element Element - Grid item
-   * @param count  A unique count of each added grid item
    */
-  public add(element, count) {
+  public add(element) {
     let addStatus = this.masonryOptions.addStatus.toLowerCase();
 
     // set margin bottom of gutter value.
@@ -312,6 +298,8 @@ export class NgMasonryGridService {
     if (this.useImagesLoaded) {
       setTimeout( () => {
         this.imagesLoaded(element, (instance: any) => {
+          ++this.itemsRenderedCount;
+          this.items.push(element);
           // append or prepend based on masonry option
           if (addStatus === 'prepend') {
             if (this._msnry.items.length !== 0) {
@@ -331,6 +319,8 @@ export class NgMasonryGridService {
           this._msnry.layout();
         });
       }, 0);
+    
+
     } else {
 
       if (addStatus === 'prepend') {
@@ -354,6 +344,67 @@ export class NgMasonryGridService {
 
   }
 
+  public addOrderItem(element) {
+    let addStatus = this.masonryOptions.addStatus.toLowerCase();
+    
+    // set margin bottom of gutter value.
+    if (this.masonryOptions.gutter) {
+      element.style.marginBottom = this.masonryOptions.gutter + 'px';
+    }
+
+    if (this.useImagesLoaded) {
+      setTimeout( () => {
+        this.imagesLoaded(element, (instance: any) => {
+         
+        });
+      }, 0);
+    
+
+    } else {
+
+      if (addStatus === 'prepend') {
+        if (this._msnry.items.length !== 0) {
+          this.el.insertBefore(element, this._msnry.items[0].element);
+          this._msnry.prepended(element);
+        } else {
+          this.el.appendChild(element);
+          this._msnry.appended(element);
+        }
+      } else if (addStatus === 'append') {
+          this.el.appendChild(element);
+          this._msnry.appended(element);
+      } else {
+        this.el.appendChild(element);
+        this._msnry.addItems(element);
+      }
+
+      this._msnry.layout();
+    }
+    
+  }
+
+  public reorderMasonryItems() {
+    if (this.itemsRenderedCount === this.itemsCount) {
+      let reorderItems = this.items.sort( (a: any, b: any) => {
+        return a.dataset.count - b.dataset.count;
+      });
+      while (this.el.hasChildNodes()) {
+          this.el.removeChild(this.el.lastChild);  
+      }      
+     
+      setTimeout( ()=> {
+        reorderItems.forEach( (item) => {
+          this.el.appendChild(item);
+          this._msnry.appended(item);
+        });
+        if (this._msnry) {     
+          this._msnry.reloadItems(); 
+          this._msnry.layout();
+        }
+      }, 100);
+    }
+  }
+
   /**
    * Set add status to Masonry before adding or appending
    * @param value 'append' or 'prepend' or 'add'
@@ -366,7 +417,7 @@ export class NgMasonryGridService {
    * Remove grid item from Masonry
    * @param item Element: Removed Grid Item DOM
    */
-  public removeItem(item: Element): Observable<MasonryGridItem> {
+  public removeItem(item: any): Observable<MasonryGridItem> {
     this.removeAnimation();
     if (item) {
       item.classList.remove('animate');
@@ -378,6 +429,12 @@ export class NgMasonryGridService {
         setTimeout(() => {
           const elem = this._msnry.items[index].element;
           this._onTransitionEnd(observer, elem);
+          const indx = this.items.findIndex( (element) => {
+            return element.dataset.count === item.dataset.count;
+          });
+          this.items.splice(indx, 1);
+          this.itemsCount -= 1;
+          this.itemsRenderedCount -= 1;
         }, 10);
       });
       return obsv;
@@ -396,6 +453,9 @@ export class NgMasonryGridService {
       const obsv = new Observable(observer => {
         setTimeout(() => {
           this._onTransitionEnd(observer, this._msnry.items[0].element);
+          this.items.splice(0, 1);
+          this.itemsCount -= 1;
+          this.itemsRenderedCount -= 1;
         }, 10);
       });
       return obsv;
@@ -422,6 +482,9 @@ export class NgMasonryGridService {
           setTimeout(() => {
             this._msnry.reloadItems();
             this._msnry.layout();
+            this.items = [];
+            this.itemsCount = 0;
+            this.itemsRenderedCount = 0;
           }, 10);
           elem.removeEventListener('transitionend', transitionEnd, false);
         };

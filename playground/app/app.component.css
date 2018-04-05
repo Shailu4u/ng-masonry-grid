@@ -50,3 +50,9 @@
 .div-1, .div-2 {
     float: left;
 }
+
+img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+}

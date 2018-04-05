@@ -22,6 +22,7 @@ export interface MasonryOptions {
     originLeft?: boolean;
     originTop?: boolean;
     addStatus?: string;
+    horizontalOrder?: boolean;
 
     // setup
     containerStyle?: {};
@@ -57,6 +58,7 @@ export class Masonry {
 
     // utilities
     reloadItems?(): void;
+    reOrderItems?(): void;
     destroy?(): void;
     getItemElements?(): any[];
     data?(element: Element): Masonry;
