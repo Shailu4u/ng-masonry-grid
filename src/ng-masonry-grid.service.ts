@@ -319,7 +319,7 @@ export class NgMasonryGridService {
           this._msnry.layout();
         });
       }, 0);
-    
+
 
     } else {
 
@@ -346,7 +346,7 @@ export class NgMasonryGridService {
 
   public addOrderItem(element) {
     let addStatus = this.masonryOptions.addStatus.toLowerCase();
-    
+
     // set margin bottom of gutter value.
     if (this.masonryOptions.gutter) {
       element.style.marginBottom = this.masonryOptions.gutter + 'px';
@@ -355,10 +355,10 @@ export class NgMasonryGridService {
     if (this.useImagesLoaded) {
       setTimeout( () => {
         this.imagesLoaded(element, (instance: any) => {
-         
+
         });
       }, 0);
-    
+
 
     } else {
 
@@ -380,7 +380,7 @@ export class NgMasonryGridService {
 
       this._msnry.layout();
     }
-    
+
   }
 
   public reorderMasonryItems() {
@@ -389,16 +389,16 @@ export class NgMasonryGridService {
         return a.dataset.count - b.dataset.count;
       });
       while (this.el.hasChildNodes()) {
-          this.el.removeChild(this.el.lastChild);  
-      }      
-     
+          this.el.removeChild(this.el.lastChild);
+      }
+
       setTimeout( ()=> {
         reorderItems.forEach( (item) => {
           this.el.appendChild(item);
           this._msnry.appended(item);
         });
-        if (this._msnry) {     
-          this._msnry.reloadItems(); 
+        if (this._msnry) {
+          this._msnry.reloadItems();
           this._msnry.layout();
         }
       }, 100);
@@ -489,6 +489,10 @@ export class NgMasonryGridService {
           elem.removeEventListener('transitionend', transitionEnd, false);
         };
         elem.addEventListener('transitionend', transitionEnd , false);
+
+        if (this.masonryOptions.transitionDuration === "0") {
+            transitionEnd()
+        }
       }, 10);
     });
 
