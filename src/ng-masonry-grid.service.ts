@@ -285,7 +285,7 @@ export class NgMasonryGridService {
    */
   public add(element) {
     let addStatus = this.masonryOptions.addStatus.toLowerCase();
-
+   
     // set margin bottom of gutter value.
     if (this.masonryOptions.gutter) {
       element.style.marginBottom = this.masonryOptions.gutter + 'px';
@@ -303,47 +303,76 @@ export class NgMasonryGridService {
           // append or prepend based on masonry option
           if (addStatus === 'prepend') {
             if (this._msnry.items.length !== 0) {
-              this.el.insertBefore(element, this._msnry.items[0].element);
+              this.el.insertBefore(element, this._msnry.items[0].element);              
+            } else {
+              this.el.appendChild(element);              
+            }
+          } else if (addStatus === 'append') {
+            this.el.appendChild(element);            
+          } else {
+            this.el.appendChild(element);            
+          }
+          setTimeout(() => {
+            if (addStatus === 'prepend') {
+              if (this._msnry.items.length !== 0) {               
+                this._msnry.prepended(element);
+              } else {
+                this._msnry.appended(element);
+              }
+            } else if (addStatus === 'append') {
+              this._msnry.appended(element);
+            } else {
+              this._msnry.addItems(element);
+            }
+            
+            this._msnry.layout();
+          }, 0);
+        });
+      }, 0);
+      
+    } else {
+      setTimeout(() => {
+        ++this.itemsRenderedCount;
+        this.items.push(element);
+        if (addStatus === 'prepend') {
+          if (this._msnry.items.length !== 0) {
+            this.el.insertBefore(element, this._msnry.items[0].element);
+            // this._msnry.prepended(itemElem);
+          } else {
+            this.el.appendChild(element);
+            // this._msnry.appended(itemElem);
+          }
+        } else if (addStatus === 'append') {
+            this.el.appendChild(element);
+            // this._msnry.appended(itemElem);
+        } else {
+          this.el.appendChild(element);
+          // this._msnry.addItems(itemElem);
+        }
+  
+        setTimeout(() => {
+          if (addStatus === 'prepend') {
+            if (this._msnry.items.length !== 0) {               
               this._msnry.prepended(element);
             } else {
-              this.el.appendChild(element);
               this._msnry.appended(element);
             }
           } else if (addStatus === 'append') {
-            this.el.appendChild(element);
             this._msnry.appended(element);
           } else {
-            this.el.appendChild(element);
             this._msnry.addItems(element);
-          }
+          }        
           this._msnry.layout();
-        });
+        }, 50);
       }, 0);
-
-
-    } else {
-
-      if (addStatus === 'prepend') {
-        if (this._msnry.items.length !== 0) {
-          this.el.insertBefore(element, this._msnry.items[0].element);
-          this._msnry.prepended(element);
-        } else {
-          this.el.appendChild(element);
-          this._msnry.appended(element);
-        }
-      } else if (addStatus === 'append') {
-          this.el.appendChild(element);
-          this._msnry.appended(element);
-      } else {
-        this.el.appendChild(element);
-        this._msnry.addItems(element);
-      }
-
-      this._msnry.layout();
     }
 
   }
 
+  /**
+   * TODO: reorder masonry items on load
+   * @param element 
+   */
   public addOrderItem(element) {
     let addStatus = this.masonryOptions.addStatus.toLowerCase();
 
@@ -361,27 +390,52 @@ export class NgMasonryGridService {
 
 
     } else {
-
-      if (addStatus === 'prepend') {
-        if (this._msnry.items.length !== 0) {
-          this.el.insertBefore(element, this._msnry.items[0].element);
-          this._msnry.prepended(element);
+      setTimeout( () => {
+        if (addStatus === 'prepend') {
+          if (this._msnry.items.length !== 0) {
+            this.el.insertBefore(element, this._msnry.items[0].element);
+            // this._msnry.prepended(element);
+          } else {
+            this.el.appendChild(element);
+            // this._msnry.appended(element);
+          }
+        } else if (addStatus === 'append') {
+            this.el.appendChild(element);
+            // this._msnry.appended(element);
         } else {
           this.el.appendChild(element);
-          this._msnry.appended(element);
-        }
-      } else if (addStatus === 'append') {
-          this.el.appendChild(element);
-          this._msnry.appended(element);
-      } else {
-        this.el.appendChild(element);
-        this._msnry.addItems(element);
-      }
+          // this._msnry.addItems(element);
+        }      
+        
+          setTimeout(() => {
+            if (this.itemsRenderedCount === this.itemsCount) {
+            if (addStatus === 'prepend') {
+              if (this._msnry.items.length !== 0) {                 
+                  this._msnry.prepended(element);
+                  this._msnry.layout();                
+              } else {               
+                  this._msnry.appended(element);
+                  this._msnry.layout();               
+              }
+            } else if (addStatus === 'append') {               
+                this._msnry.appended(element);
+                this._msnry.layout();          
+            } else {              
+                this._msnry.addItems(element);
+                this._msnry.layout();             
+            }
+          }
+          }, 500);
+       
 
-      this._msnry.layout();
+      }, 0);
     }
 
   }
+
+  /**
+   * Re order Masonry items to original order
+   */
 
   public reorderMasonryItems() {
     if (this.itemsRenderedCount === this.itemsCount) {
@@ -433,9 +487,7 @@ export class NgMasonryGridService {
             return element.dataset.count === item.dataset.count;
           });
           this.items.splice(indx, 1);
-          this.itemsCount -= 1;
-          this.itemsRenderedCount -= 1;
-        }, 10);
+        }, 20);
       });
       return obsv;
     }
@@ -453,9 +505,7 @@ export class NgMasonryGridService {
       const obsv = new Observable(observer => {
         setTimeout(() => {
           this._onTransitionEnd(observer, this._msnry.items[0].element);
-          this.items.splice(0, 1);
-          this.itemsCount -= 1;
-          this.itemsRenderedCount -= 1;
+          this.items.splice(0, 1);         
         }, 10);
       });
       return obsv;
