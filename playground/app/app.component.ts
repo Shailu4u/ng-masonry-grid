@@ -8,6 +8,7 @@ import 'rxjs/add/operator/map';
   <div class="container">
     <div class="div-1">
       <h2 style="text-align: center;">Angular 2 module for Masonry layout</h2>
+      <p>Below example uses Angular material 2 components such as MatButtonModule, MatCardModule</p>
       <ng-masonry-grid *ngIf="showMasonry"
                     [masonryOptions]="{ transitionDuration: '0.4s', gutter: 10, horizontalOrder: true }"
                     [useAnimation]="true"
@@ -15,8 +16,17 @@ import 'rxjs/add/operator/map';
                     (onNgMasonryInit)="onNgMasonryInit($event)"
                     [scrollAnimationOptions]="animOptions"
                     >
-        <ng-masonry-grid-item id="{{'masonry-item-'+ (i)}}" *ngFor="let item of masonryItems; let i = index;" (click)="removeItem($event)">
-        {{item.count + 1}}<img [src]="item.src" alt="No image" />
+        <ng-masonry-grid-item id="{{'masonry-item-'+ (i)}}" *ngFor="let item of masonryItems; let i = index;">
+          <mat-card class="example-card">            
+            <img mat-card-image [src]="item.src" alt="Photo of a Shiba Inu">
+            <mat-card-content>
+              <label>Item Number: {{item.count + 1}}</label>
+            </mat-card-content>
+            <mat-card-actions>
+              <button mat-raised-button (click)="removeItem('masonry-item-'+ (i))">Remove</button>              
+            </mat-card-actions>
+          </mat-card>
+          
         </ng-masonry-grid-item>
       </ng-masonry-grid>
     </div>
@@ -121,9 +131,10 @@ export class AppComponent implements OnDestroy {
   }
 
   // done without images
-  removeItem($event: any) {
+  removeItem(item: any) {
     if (this._masonry) {
-      this._removeItemSubscription = this._masonry.removeItem($event.currentTarget)
+      const elem = document.querySelector("#"+item);
+      this._removeItemSubscription = this._masonry.removeItem(elem)
           .subscribe((item: MasonryGridItem) => {
            if (item) {
             let id = item.element.getAttribute('id');
