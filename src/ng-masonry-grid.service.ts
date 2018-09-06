@@ -8,9 +8,7 @@ import { isPlatformBrowser } from '@angular/common';
 import { MasonryOptions, Masonry as IMasonry, AnimationOptions,
         ImagesLoadedConstructor, MasonryGridItem } from './ng-masonry-grid.interface';
 
-import { Observable } from 'rxjs/Observable';
-import { EmptyObservable } from 'rxjs/observable/EmptyObservable';
-import { Subscriber } from 'rxjs/Subscriber';
+import { Observable,  Subscriber, empty } from 'rxjs';
 
 declare var require: any;
 
@@ -475,7 +473,7 @@ export class NgMasonryGridService {
     this.removeAnimation();
     if (item) {
       item.classList.remove('animate');
-      const obsv = new Observable(observer => {
+      const obsv = Observable.create(observer => {
         let count = item.getAttribute('data-count');
         let index = this._msnry.items.findIndex( (masonryItem: any) => {
             return masonryItem.element.getAttribute('data-count') === count;
@@ -492,7 +490,7 @@ export class NgMasonryGridService {
       return obsv;
     }
 
-    return new EmptyObservable();
+    return empty();
   }
 
   /**
@@ -502,16 +500,16 @@ export class NgMasonryGridService {
     this.removeAnimation();
     if (this._msnry.items.length) {
       this._msnry.items[0].element.classList.remove('animate');
-      const obsv = new Observable(observer => {
-        setTimeout(() => {
+      const obsv = Observable.create(observer => {
+        //setTimeout(() => {
           this._onTransitionEnd(observer, this._msnry.items[0].element);
           this.items.splice(0, 1);         
-        }, 10);
+        //}, 10);
       });
       return obsv;
     }
 
-    return new EmptyObservable();
+    return empty();
   }
 
   /**
@@ -519,7 +517,7 @@ export class NgMasonryGridService {
    */
   public removeAllItems(): Observable<MasonryGridItem> {
     this.removeAnimation();
-    const obsv = new Observable(observer => {
+    const obsv = Observable.create(observer => {
       setTimeout(() => {
         let items: MasonryGridItem[] = [];
         this._msnry.items.forEach( (masonryItem: any, index: number) => {

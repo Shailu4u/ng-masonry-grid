@@ -1,7 +1,7 @@
 import { Component, OnDestroy } from '@angular/core';
 import { Masonry, MasonryGridItem } from 'ng-masonry-grid';
-import { ISubscription } from 'rxjs/Subscription';
-import 'rxjs/add/operator/map';
+import { SubscriptionLike as ISubscription } from 'rxjs';
+
 @Component({
   selector: 'app-root',
   template: `

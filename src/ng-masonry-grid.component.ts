@@ -16,7 +16,7 @@ import {
   AfterContentInit
 } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 
 declare var require: any;
 

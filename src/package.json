@@ -1,7 +1,7 @@
 {
   "name": "ng-masonry-grid",
-  "version": "1.2.5",
-  "description": "Angular 2+ masonry grid component with CSS3 animations on scroll.",
+  "version": "1.3.0",
+  "description": "Angular 6+ masonry grid component with CSS3 animations on scroll.",
   "repository": {
     "type": "git",
     "url": "https://github.com/Shailu4u/ng-masonry-grid.git"
@@ -11,6 +11,7 @@
     "email": "shailu.snist@gmail.com"
   },
   "keywords": [
+    "angular 6 masonry",
     "angular2-masonry", 
     "masonry",
     "masonry layout",
@@ -30,10 +31,11 @@
   "jsnext:main": "ng-masonry-grid.js",
   "typings": "ng-masonry-grid.d.ts",
   "peerDependencies": {
-    "@angular/core": "^5.0.0",
-    "@angular/common": "^5.0.0",
-    "rxjs": "^5.1.0",
-    "zone.js": "^0.8.4",
+    "@angular/core": "^6.1.7",
+    "@angular/common": "^6.1.7",
+    "rxjs": "^6.3.2",
+    "rxjs-compat": "^6.3.2",
+    "zone.js": "^0.8.26",
     "imagesloaded": "^4.1.4",
     "masonry-layout": "^4.2.1"
   }
