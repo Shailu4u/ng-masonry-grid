@@ -7,6 +7,8 @@ Angular 6+ masonry grid component with CSS animations on scroll.
 
 Demo: https://ng-masonry-grid.stackblitz.io/ 
 
+Note: If you want angular 5 ng-masonry-grid, use (ng-masonry-angular5) branch for the same.
+
 ## Installation
 
 First install Peer dependencies
