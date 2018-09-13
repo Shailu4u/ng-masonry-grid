@@ -15,7 +15,7 @@ import {
 } from '@angular/core';
 
 import { NgMasonryGridComponent } from './ng-masonry-grid.component';
-import { isPlatformBrowser } from '@angular/common';  
+import { isPlatformBrowser } from '@angular/common';
 import { NgMasonryGridService } from './ng-masonry-grid.service';
 
 interface MutationWindow extends Window {
@@ -62,6 +62,9 @@ export class NgMasonryGridDirective implements OnDestroy, AfterViewInit, OnInit 
   }
 
   ngOnDestroy() {
+    if (isPlatformBrowser(this.platformId)) {
+      this._parent.remove(this._element.nativeElement);
+    }
   }
 
   /** When HTML in brick changes dynamically, observe that and change layout */
